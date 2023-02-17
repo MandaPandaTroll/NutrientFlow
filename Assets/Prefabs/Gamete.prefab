@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 87627286821722028}
   - component: {fileID: 5431359384315486538}
   - component: {fileID: 7355329599490016405}
-  - component: {fileID: 4613133360478808731}
-  m_Layer: 0
-  m_Name: Gamete_small
-  m_TagString: Untagged
+  - component: {fileID: 3425457196543319433}
+  m_Layer: 3
+  m_Name: Gamete
+  m_TagString: smallGamete
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,9 +75,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0, g: 0, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -113,7 +113,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 2752296361011086610}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 1
+  m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -122,9 +122,9 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &4613133360478808731
+--- !u!114 &3425457196543319433
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,6 +133,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 2752296361011086610}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2dc3a72d9565470f9fc802ed370ba88, type: 3}
+  m_Script: {fileID: 11500000, guid: f3ddef9f7dec641d381833929f324601, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  motile: 0
+  autoTrophSpawned: 0
+  chemotaxisEnabled: 0
+  perceptionRadius: 0
+  incompatibilityEnabled: 0
+  interactionRadius: 1
+  actionFrequency: 0.5
+  actionTimer: 0
+  nutrientLevel: 0
+  numSteps: 0
+  maximumLifeSpan: 1000
+  autotroph_prefab: {fileID: 5091997082272881867, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}

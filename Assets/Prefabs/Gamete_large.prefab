@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7999177609082907491}
   - component: {fileID: 8976527541794661981}
   - component: {fileID: -8784225381261567103}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Gamete_large
-  m_TagString: Untagged
+  m_TagString: largeGamete
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,3 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bab6a2430a48647e785fd71432baaf70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  motile: 0
+  incompatibilityEnabled: 0
+  interactionRadius: 0

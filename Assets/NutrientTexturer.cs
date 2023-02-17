@@ -12,12 +12,13 @@ Gradient gradient;
     GradientColorKey[] colorKey;
     GradientAlphaKey[] alphaKey;
     
-    NutrientGridHandler gridContainer;
+    DiscreteGrid gridContainer;
     public RawImage img;
-    FloatGrid m_nutgrid;
+    IntGrid m_nutgrid;
     public CustomRenderTexture rendTex;
    int [] dims = new int[2];
    
+   Color homoGen = new Color(0.1f,0.1f,0.1f,1.0f);
    
     // Start is called before the first frame update
      void Start()
@@ -29,7 +30,7 @@ Gradient gradient;
         colorKey = new GradientColorKey[2];
         colorKey[0].color = Color.black;
         colorKey[0].time = 0.0f;
-        colorKey[1].color = new Color(1.0f,1.0f,1.0f,1.0f);
+        colorKey[1].color = Color.white;//new Color(0.4f,0.4f,0.4f,1.0f);
         colorKey[1].time = 1.0f;
 
         
@@ -45,7 +46,7 @@ Gradient gradient;
 
         gradient.SetKeys(colorKey,alphaKey);
 
-      gridContainer = GameObject.Find("NutrientGrid").GetComponent<NutrientGridHandler>();
+      gridContainer = GameObject.Find("NutrientGrid").GetComponent<DiscreteGrid>();
       
       m_nutgrid = gridContainer.nutrientGrid;
       dims[0] = gridContainer.gridWidth;
@@ -63,7 +64,7 @@ Gradient gradient;
          //for(int i = 0; i <63; i ++){
             //previousX[i] = 0;
             //previousY[i] = 0;
-                 texture =  new Texture2D(dims[0], dims[1], TextureFormat.RGB24, false);
+                 texture =  new Texture2D(dims[0], dims[1], TextureFormat.RGBA32, false);
                  //rendTex.width = dims[0];
                  //rendTex.height = dims[1];
                   for(int i= 0; i < dims[0]; i++){
@@ -88,34 +89,49 @@ Gradient gradient;
     // Update is called once per frame
 
   Color tempCol;
-    void Update()
+    void FixedUpdate()
     {   
       timePassed += Time.deltaTime;
         float maxVal = 0;
        float tempval = 0;
+       float minVal = 256;
        if(timePassed >= textureRefreshRate){
         
         
           for(int i = 0;i < dims[0];i++){
           for(int j = 0;j < dims[1];j++){
-            tempval = m_nutgrid.GetValue(i,j);
+            tempval = (float)m_nutgrid.GetValue(i,j);
             if(tempval > maxVal){
               maxVal = tempval;
+            }
+            if(tempval < minVal){
+              minVal = tempval;
             }
           }
 
         }
-        
+       //maxVal = maxVal*10f;
         if( maxVal > 0){
           for(int i = 0;i < dims[0];i++){
             for(int j = 0;j < dims[1];j++){
-              tempval = m_nutgrid.GetValue(i,j);
-              scaledVal =  tempval/maxVal;
-             // if(tempval > 0){
-                //scaledVal = 1.0f;
-             // }else{scaledVal = 0f;}
-              tempCol = gradient.Evaluate(tempval);
-              texture.SetPixel(i,j,tempCol);
+
+              tempval = (float)m_nutgrid.GetValue(i,j);
+              if (tempval > 0 && tempval > minVal){
+                  if(tempval > minVal){
+                    scaledVal =  Mathf.Clamp01((1f/sensitivity)*(Mathf.Log10((float)tempval/(float)maxVal))+1f);
+                     //scaledVal = Mathf.Pow(scaledVal,4f);
+                    // if(tempval > 0){
+                      //scaledVal = 1.0f;
+                      // }else{scaledVal = 0f;}
+                     tempCol = gradient.Evaluate(scaledVal);
+                    texture.SetPixel(i,j,tempCol);
+                  }else if(tempval == minVal && minVal > 0){
+                    texture.SetPixel(i,j,homoGen);
+                  }
+                  
+              }else if (tempval == 0){texture.SetPixel(i,j,Color.black);}
+              
+              
             }
           }
         }

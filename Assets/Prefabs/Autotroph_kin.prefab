@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: -748643579211721301}
   m_Layer: 0
   m_Name: Autotroph_kin
-  m_TagString: Untagged
+  m_TagString: Autotroph
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -115,7 +115,7 @@ Transform:
   m_GameObject: {fileID: 5091997082272881867}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -1.1019135, y: -0.24916184, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5091997081896318695}
@@ -200,7 +200,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 5091997082272881867}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 1
+  m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 5
@@ -209,7 +209,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: 2b2b9b9e076a348dd80ef4c27d2f03b8, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 0
 --- !u!96 &5091997082272881869
 TrailRenderer:
@@ -334,23 +334,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb1d08e6da20d4839bc8d8d00545978a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nutrientLevel: 0
-  maxNutrients: 64
-  growthCost: 0.01
-  growthRate: 0.00001
+  generation: 0
+  baseCost_energy: 0.5
+  growthCost_energy: 4
+  gameteCost_energy: 32
+  energySynthase_UpkeepCost_energy: 4
+  movementCost: 1
+  turningCost: 0.5
+  perNutrientAbsorptionCost: 0.1
+  baseCost_nutrient: 1
+  growthCost_nutrient: 1
+  gameteCost_nutrient: 8
+  energySynthase_UpkeepCost_nutrient: 1
+  masterFrequency: 1
+  catabolicFrequency: 8
+  actionFrequency: 1
+  anabolicFrequency: 1
+  photosyntheticFrequency: 4
+  energyLevel: 256
+  energySynthase_Integrity: 1
   currentMaturity: 0
-  gameteCost_small: 0
-  gameteCost_large: 0
-  minimumMaturityAge: 0
+  nutrientLevel: 0
+  spentNutrients: 0
+  age: 0
+  energy_init: 0
+  growthRate: 0.01
+  movementSpeed: 0.01
+  energySynthase_DecayAmount: 0.001
+  maxTurnAngle: 45
+  turnProbability: 0.025
+  energySynthase_restoreAmount: 0.01
+  baseEnergyProduction: 8
+  maxNutrients: 512
   maximumLifeSpan: 0
-  movementCost: 0.000001
-  turningCost: 0.000001
-  absorptionRate: 0.02
-  movementSpeed: 0.02
-  maxTurnAngle: 8
-  actionFrequency: 0.02
-  actionTimer: 0
-  turnProbability: 0.5
+  absorptionRate: 16
+  minimumMaturityAge: 512
   turnDice: 0
-  numSteps: 0
+  Gamete: {fileID: 2752296361011086610, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
+  mapBounds: {x: 0, y: 0}
   cellValue: 0

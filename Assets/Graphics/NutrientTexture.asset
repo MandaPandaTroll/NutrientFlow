@@ -21,9 +21,9 @@ CustomRenderTexture:
   m_DepthStencilFormat: 0
   m_ColorFormat: 52
   m_MipMap: 0
-  m_GenerateMips: 1
+  m_GenerateMips: 0
   m_SRGB: 0
-  m_UseDynamicScale: 0
+  m_UseDynamicScale: 1
   m_BindMS: 0
   m_EnableCompatibleFormat: 1
   m_TextureSettings:
@@ -37,18 +37,18 @@ CustomRenderTexture:
   m_Dimension: 2
   m_VolumeDepth: 1
   m_ShadowSamplingMode: 2
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: f5ef3c933fa904863b9ca07337ac6070, type: 2}
   m_InitSource: 0
   m_InitMaterial: {fileID: 2100000, guid: f5ef3c933fa904863b9ca07337ac6070, type: 2}
-  m_InitColor: {r: 0, g: 0, b: 0, a: 1}
+  m_InitColor: {r: 0, g: 0, b: 0, a: 0}
   m_InitTexture: {fileID: 8600000}
   m_UpdateMode: 2
   m_InitializationMode: 2
   m_UpdateZoneSpace: 1
   m_CurrentUpdateZoneSpace: 1
   m_UpdateZones: []
-  m_UpdatePeriod: 0
-  m_ShaderPass: 2
+  m_UpdatePeriod: 1
+  m_ShaderPass: 0
   m_CubemapFaceMask: 4294967295
   m_DoubleBuffered: 0
   m_WrapUpdateZones: 0

@@ -3,12 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - smallGamete
+  - largeGamete
+  - Wall
+  - Autotroph
+  - Time
+  - Steps
+  - MeanGen
+  - TotNutes
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Gametes
   - Water
   - UI
   - 
@@ -40,4 +48,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 3172486367
     locked: 0
