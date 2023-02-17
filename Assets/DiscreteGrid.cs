@@ -139,21 +139,21 @@ public class DiscreteGrid : MonoBehaviour
 int[,] kernel = new int[3,3];
 
 void DefaultDiffusion(){
-   
+            
             int hereval;
            
             gridWidth = arrayDim0;
             gridHeight = arrayDim1;
 
-           // int dirs = UnityEngine.Random.Range(-2,3);
+            int dirs = UnityEngine.Random.Range(1,5);
             if(dirCounter == 0){
-                for(int x = 0; x < gridWidth-1; x++){
-                    for(int y = 0; y < gridHeight-1; y++){
+                for(int x = 0; x < gridWidth; x++){
+                    for(int y = 0; y < gridHeight; y++){
                     
                     kernel = nutrientGrid.GetKernel(x,y);
-                    if(kernel.Cast<int>().Sum() == 0){
-                        break;
-                    }
+                    //if(kernel.Cast<int>().Sum() == 0){
+                     //   break;
+                    //}
                     hereval = kernel[1,1];
 
                   
@@ -255,7 +255,7 @@ void DefaultDiffusion(){
                         }*/
                         
                         if(moveAmount > 0){
-                        moveAmount = Random.Range(1,moveAmount);
+                        //moveAmount = Random.Range(1,moveAmount);
                         nutrientGrid.SetValue(maxFirstIndex+x-1,maxSecondIndex+y-1,maxValue-moveAmount);
                             nutrientGrid.SetValue(x,y,hereval+moveAmount);
                         }
@@ -270,10 +270,12 @@ void DefaultDiffusion(){
                 }
                 dirCounter = 1;
             }else if(dirCounter == 1){
-                for(int x = gridWidth-1; x > 0; x--){
-                for(int y = gridHeight-1; y > 0; y--){
+                for(int x = gridWidth; x > 0; x--){
+                for(int y = gridHeight; y > 0; y--){
                     kernel = nutrientGrid.GetKernel(x,y);
-                    
+                    //if(kernel.Cast<int>().Sum() == 0){
+                     //   break;
+                    //}
 
                     hereval = kernel[1,1];
 
@@ -376,7 +378,7 @@ void DefaultDiffusion(){
                         }*/
                         
                         if(moveAmount > 0){
-                        moveAmount = Random.Range(1,moveAmount);
+                        //moveAmount = Random.Range(1,moveAmount);
                         nutrientGrid.SetValue(maxFirstIndex+x-1,maxSecondIndex+y-1,maxValue-moveAmount);
                             nutrientGrid.SetValue(x,y,hereval+moveAmount);
                         }
@@ -391,10 +393,12 @@ void DefaultDiffusion(){
             }
                 dirCounter = 2;
             }else if(dirCounter == 2){
-                for(int x = gridWidth-1; x > 0; x--){
-                for(int y = 0; y < gridHeight-1; y++){
+                for(int x = gridWidth; x > 0; x--){
+                for(int y = 0; y < gridHeight; y++){
                     kernel = nutrientGrid.GetKernel(x,y);
-                    
+                    //if(kernel.Cast<int>().Sum() == 0){
+                     //   break;
+                    //}
 
                     hereval = kernel[1,1];
 
@@ -496,7 +500,7 @@ void DefaultDiffusion(){
                             moveAmount= Mathf.ClosestPowerOfTwo(deltaval)/4;
                         }*/
                         if(moveAmount > 0){
-                        moveAmount = Random.Range(1,moveAmount);
+                        //moveAmount = Random.Range(1,moveAmount);
                         nutrientGrid.SetValue(maxFirstIndex+x-1,maxSecondIndex+y-1,maxValue-moveAmount);
                             nutrientGrid.SetValue(x,y,hereval+moveAmount);
                         }
@@ -511,10 +515,12 @@ void DefaultDiffusion(){
             }
                 dirCounter = 3;
             }else if(dirCounter == 3){
-                for(int x = 0; x < gridWidth-1; x++){
-                for(int y = gridHeight-1; y > 0; y--){
+                for(int x = 0; x < gridWidth; x++){
+                for(int y = gridHeight; y > 0; y--){
                     kernel = nutrientGrid.GetKernel(x,y);
-                    
+                    //if(kernel.Cast<int>().Sum() == 0){
+                     //   break;
+                    //}
 
                     hereval = kernel[1,1];
 
@@ -616,7 +622,7 @@ void DefaultDiffusion(){
                             moveAmount= Mathf.ClosestPowerOfTwo(deltaval)/4;
                         }*/
                         if(moveAmount > 0){
-                        moveAmount = Random.Range(1,moveAmount);
+                        //moveAmount = Random.Range(1,moveAmount);
                         nutrientGrid.SetValue(maxFirstIndex+x-1,maxSecondIndex+y-1,maxValue-moveAmount);
                             nutrientGrid.SetValue(x,y,hereval+moveAmount);
                         }

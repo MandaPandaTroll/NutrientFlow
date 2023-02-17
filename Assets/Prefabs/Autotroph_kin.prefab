@@ -335,7 +335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generation: 0
-  baseCost_energy: 0.5
+  baseCost_energy: 0.25
   growthCost_energy: 4
   gameteCost_energy: 32
   energySynthase_UpkeepCost_energy: 4
@@ -347,7 +347,7 @@ MonoBehaviour:
   gameteCost_nutrient: 8
   energySynthase_UpkeepCost_nutrient: 1
   masterFrequency: 1
-  catabolicFrequency: 8
+  catabolicFrequency: 12
   actionFrequency: 1
   anabolicFrequency: 1
   photosyntheticFrequency: 4
@@ -365,7 +365,7 @@ MonoBehaviour:
   turnProbability: 0.025
   energySynthase_restoreAmount: 0.01
   baseEnergyProduction: 8
-  maxNutrients: 512
+  maxNutrients: 1024
   maximumLifeSpan: 0
   absorptionRate: 16
   minimumMaturityAge: 512

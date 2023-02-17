@@ -101,7 +101,7 @@ public class Autotroph_main : MonoBehaviour
             age += 1;
         
         
-        if(age >= maximumLifeSpan || energyLevel <= 1){
+        if(age >= maximumLifeSpan || energyLevel <= 1 ){
             
             Destroy(gameObject,0.2f);
         }
@@ -144,7 +144,7 @@ public class Autotroph_main : MonoBehaviour
             }
 
             
-            if(currentMaturity >= 0.99f && age >= minimumMaturityAge && energyLevel >= gameteCost_energy && nutrientLevel >= gameteCost_nutrient){
+            if(currentMaturity >= 0.99f && age >= minimumMaturityAge && energyLevel >= gameteCost_energy*4f && nutrientLevel >= gameteCost_nutrient){
                 ProduceGamete();
             }
             

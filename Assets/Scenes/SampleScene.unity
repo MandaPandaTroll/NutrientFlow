@@ -1984,7 +1984,7 @@ MonoBehaviour:
   boxTransform: {fileID: 1613774633}
   gridWidth: 0
   gridHeight: 0
-  cellSize: 2
+  cellSize: 1
   initialConcentration: 0
   discreteAdd: 0
   nutrientSampleRate: 1
@@ -5952,7 +5952,7 @@ Transform:
   m_GameObject: {fileID: 1613774631}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 512, y: 512, z: 1}
+  m_LocalScale: {x: 256, y: 256, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 733099880}
@@ -6086,7 +6086,7 @@ MonoBehaviour:
   initPopInputField: {fileID: 978343262}
   initialNutrientLevel: 0
   initialPopulationSize: 0
-  initialSpawnRange: 0.01
+  initialSpawnRange: 0.5
   box: {fileID: 1613774631}
 --- !u!114 &1683066735
 MonoBehaviour:
