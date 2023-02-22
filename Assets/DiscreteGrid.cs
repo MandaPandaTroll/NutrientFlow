@@ -7,12 +7,9 @@ using UnityEngine.UI;
 public class DiscreteGrid : MonoBehaviour
 {
 
-
-
- 
-
    
     public float initDiffusionRate;
+ 
     public  float diffusionRate;
     public static float diffusionDivisor{get;set;}
     public static bool DiffusionEnabled{get;set;}
@@ -37,9 +34,20 @@ public class DiscreteGrid : MonoBehaviour
     int dirCounter = 0;
     int dirs;
     public int numCells;
-    int arrayDim0, arrayDim1;
    int tempFree, tempLocked, tempTotal;
    public int maxPerVeryRandomSpawnDivisor;
+   public StatisticsWriter statisticsWriter;
+
+   public static Vector2 boxSize{get;set;}
+  
+   void Awake(){
+        gridWidth = Mathf.FloorToInt(boxTransform.localScale.x/cellSize);
+        gridHeight = Mathf.FloorToInt(boxTransform.localScale.y/cellSize);
+        StatisticsWriter.gridDims[0] = gridWidth;
+        StatisticsWriter.gridDims[1] = gridHeight;
+        boxSize = new Vector2(boxTransform.localScale.x, boxTransform.localScale.y);
+        
+   }
     void Start()
     {
 
@@ -47,24 +55,24 @@ public class DiscreteGrid : MonoBehaviour
         diffusionDivisor = 1f;
         diffusionEnabled = initDiffusionEnabled;
         originPosition = new Vector3(-boxTransform.localScale.x/2f,-boxTransform.localScale.y/2f,0f);
-        gridWidth = Mathf.FloorToInt(boxTransform.localScale.x/cellSize);
-        gridHeight = Mathf.FloorToInt(boxTransform.localScale.y/cellSize);
+        
 
         nutrientGrid = new IntGrid(gridWidth,gridHeight,cellSize,originPosition);
-        arrayDim0 = nutrientGrid.gridArray.GetLength(0);
-        arrayDim1 = nutrientGrid.gridArray.GetLength(1);
+        
         numCells = gridWidth*gridHeight;
         
-        
+
        
     }
 
     void Update(){
+
         if(DoSpawnNutrients == true){
             DoSpawnNutrients = false;
             initialConcentration = InputFieldToFloat.value;
             SpawnNutrients();
         }
+        
     }
 
     public void SpawnNutrients(){
@@ -113,6 +121,9 @@ public class DiscreteGrid : MonoBehaviour
            
 
         }
+
+        StatisticsWriter.sampleGrid = nutrientGrid.gridArray;
+        statisticsWriter.WriteNutrientGrid(nutrientGrid.gridArray);
     }
 
     float diffusionTimer;
@@ -122,7 +133,8 @@ public class DiscreteGrid : MonoBehaviour
         
         sampleTimer += Time.fixedDeltaTime;
         diffusionTimer += Time.fixedDeltaTime;
-
+        StatisticsWriter.sampleGrid = nutrientGrid.gridArray;
+        
         if (sampleTimer >= nutrientSampleRate){
             
             SampleNutrients();
@@ -130,6 +142,7 @@ public class DiscreteGrid : MonoBehaviour
         if(diffusionTimer >= diffusionRate && diffusionEnabled == true){
              diffusionRate = 1f/diffusionDivisor;
             DefaultDiffusion();
+            
         }
 
         
@@ -139,11 +152,11 @@ public class DiscreteGrid : MonoBehaviour
 int[,] kernel = new int[3,3];
 
 void DefaultDiffusion(){
-            
+
+            //statisticsWriter.WriteNutrientGrid(nutrientGrid.gridArray);
             int hereval;
            
-            gridWidth = arrayDim0;
-            gridHeight = arrayDim1;
+            
 
             int dirs = UnityEngine.Random.Range(1,5);
             if(dirCounter == 0){
@@ -646,6 +659,7 @@ void DefaultDiffusion(){
          
 
         diffusionTimer = 0;
+        
         //return;
 }
     
@@ -695,3 +709,4 @@ public static class nutrientStats{
 
     
 }
+

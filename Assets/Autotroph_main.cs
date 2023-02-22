@@ -12,7 +12,7 @@ public class Autotroph_main : MonoBehaviour
    
     //Costs
     public float baseCost_energy, growthCost_energy, gameteCost_energy, energySynthase_UpkeepCost_energy,
-     movementCost, turningCost, perNutrientAbsorptionCost;
+     maxMovementCost,movementCost, maxTurningCost, turningCost, perNutrientAbsorptionCost;
     public int baseCost_nutrient,growthCost_nutrient, gameteCost_nutrient, energySynthase_UpkeepCost_nutrient;
 
    
@@ -23,14 +23,16 @@ public class Autotroph_main : MonoBehaviour
     int masterTimer, catabolismTimer, actionTimer, anabolismTimer, photosynthesisTimer;
 
     //Dynamic Somatic variables
-    public float energyLevel, energySynthase_Integrity, currentMaturity;
+    public float energyLevel, energySynthase_Integrity, currentMaturity, movementSpeed;
     public int nutrientLevel, spentNutrients, age;
 
 
-    //Static Somatic variables
-    public float energy_init, growthRate, movementSpeed, energySynthase_DecayAmount, maxTurnAngle, turnProbability, energySynthase_restoreAmount, baseEnergyProduction;
-    public int maxNutrients, maximumLifeSpan, absorptionRate, minimumMaturityAge;
 
+
+    //Static Somatic variables
+    public float energy_init, growthRate, maxMovementSpeed, energySynthase_DecayAmount, maxTurnAngle, turnProbability, energySynthase_restoreAmount, baseEnergyProduction;
+    public int maxNutrients, maximumLifeSpan, absorptionRate, minimumMaturityAge, maxGametes;
+    public bool maxGametesEnabled;
 
 
     //Other dynamic variables
@@ -81,7 +83,9 @@ public class Autotroph_main : MonoBehaviour
             individuals.Add(this);
         }
         maximumLifeSpan = Mathf.FloorToInt (ExtraMath.GetNormal(AccessibleGlobalSettings.meanMaximumLifeSpan, AccessibleGlobalSettings.std_lifeSpan));
-        
+        movementSpeed = maxMovementSpeed*currentMaturity;
+        movementCost = maxMovementCost*currentMaturity;
+        turningCost = maxTurningCost*currentMaturity;
     }
 
    
@@ -90,9 +94,11 @@ public class Autotroph_main : MonoBehaviour
   
     void FixedUpdate()
     {
-        if(transform.position.x > mapBounds.x || transform.position.x < -mapBounds.x || transform.position.y > mapBounds.y || transform.position.y < -mapBounds.y){
+        if(transform.position.x > mapBounds.x-8f || transform.position.x < -mapBounds.x+8f || transform.position.y > mapBounds.y-8f || transform.position.y < -mapBounds.y+8f){
             m_Rigidbody2D.MoveRotation(m_Rigidbody2D.rotation+180f);
-            m_Rigidbody2D.MovePosition(m_Rigidbody2D.position*((mapBounds.x-1)/mapBounds.x));
+            Vector2 newPosition = new Vector2((m_Rigidbody2D.position.x*(mapBounds.x-8f)/mapBounds.x),(m_Rigidbody2D.position.y*(mapBounds.y-8f)/mapBounds.y));
+            
+            m_Rigidbody2D.MovePosition(newPosition);
             
         }
         masterTimer += 1;
@@ -103,7 +109,7 @@ public class Autotroph_main : MonoBehaviour
         
         if(age >= maximumLifeSpan || energyLevel <= 1 ){
             
-            Destroy(gameObject,0.2f);
+            Destroy(gameObject,0.5f);
         }
         actionTimer         += 1;
         anabolismTimer      += 1;
@@ -139,18 +145,18 @@ public class Autotroph_main : MonoBehaviour
             
 
             //Nutrient absorption 
-            if(nutrientLevel < maxNutrients){
+            if(nutrientLevel < maxNutrients && energyLevel >= perNutrientAbsorptionCost*128f){
                 AbsorbNutrients();
             }
 
             
-            if(currentMaturity >= 0.99f && age >= minimumMaturityAge && energyLevel >= gameteCost_energy*4f && nutrientLevel >= gameteCost_nutrient){
+            if(currentMaturity >= 0.99f && age >= minimumMaturityAge && energyLevel >= gameteCost_energy*16f && nutrientLevel >= gameteCost_nutrient){
                 ProduceGamete();
             }
             
             
         
-            if(energyLevel >= movementCost && energyLevel >= turningCost){
+            if(energyLevel >= movementCost*64f && energyLevel >= turningCost*64f){
                 Move();
             }
             
@@ -180,7 +186,7 @@ public class Autotroph_main : MonoBehaviour
     }
 
     public float Photosynthesis(float energy){
-        float outEnergy = energy + baseEnergyProduction*energySynthase_Integrity;
+        float outEnergy = energy + baseEnergyProduction*energySynthase_Integrity*currentMaturity;
         return outEnergy;
     }
     public void Anabolism(){
@@ -203,7 +209,9 @@ public class Autotroph_main : MonoBehaviour
                 spentNutrients += growthCost_nutrient;
                 Vector2 newSize = new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
                 transform.localScale = newSize;
-
+                movementSpeed = maxMovementSpeed*currentMaturity;
+                movementCost = maxMovementCost*currentMaturity;
+                turningCost = maxTurningCost*currentMaturity;
                 if(currentMaturity > 1f){
                     currentMaturity = 1f;
                 }
@@ -222,7 +230,7 @@ public class Autotroph_main : MonoBehaviour
                         nutrientGrid.SetValue(transform.position,cellValue-1);
                         energyLevel -= perNutrientAbsorptionCost;
                     }
-                    if( cellValue < absorptionRate && energyLevel >= cellValue*perNutrientAbsorptionCost){
+                    else if( cellValue < absorptionRate && energyLevel >= cellValue*perNutrientAbsorptionCost){
 
                         nutrientLevel += cellValue;
                         nutrientGrid.SetValue(transform.position,0);
@@ -234,7 +242,7 @@ public class Autotroph_main : MonoBehaviour
                         energyLevel -= absorptionRate*perNutrientAbsorptionCost;
                     }    
                 }
-                return;
+                //return;
     }
 
     public void Catabolism(){

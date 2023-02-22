@@ -4,9 +4,21 @@ using UnityEngine;
 
 public class GameteMain : MonoBehaviour
 {
+
+    public struct gamete{
+    public enum gameteType{A, B, C}
+    public bool motile;
+    public bool perceptive;
+    
+    }
     public static List<GameteMain> gameteScripts = new List<GameteMain>();
     
-    public bool motile;
+                                                        //   A  ,  B ,  C
+    public bool[,] compatibilityTable = new bool[3,3]{ /*A*/{true,true,true},
+                                                       /*B*/{true,true,true},
+                                                       /*C*/{true,true,true}
+                                                        };
+    
     public bool autoTrophSpawned;
     public bool chemotaxisEnabled;
     public float perceptionRadius;
@@ -48,7 +60,7 @@ public class GameteMain : MonoBehaviour
             cellValue = nutrientgrid.GetValue(transform.position);
             nutrientgrid.SetValue(transform.position, cellValue+nutrientLevel);
             nutrientLevel = 0;
-            Destroy(gameObject, 0.2f);
+            Destroy(gameObject, 0.5f);
         }
 
         actionTimer += Time.fixedDeltaTime;
@@ -68,14 +80,16 @@ public class GameteMain : MonoBehaviour
                 if(otherGametes.Length > 1 && otherGametes[1] != this.GetComponent<Collider2D>()){
                     otherGamete_script = otherGametes[1].gameObject.GetComponent<GameteMain>();
                     if(otherGamete_script.autoTrophSpawned == false){
+                        autoTrophSpawned = true;
                         Vector2 zygotePosition = (transform.position + otherGamete_script.transform.position)/2f;
-                            sumNutrients = nutrientLevel; //+ gamete.gameObject.GetComponent<GameteMain>().nutrientLevel;
+                            sumNutrients = (nutrientLevel + otherGamete_script.nutrientLevel)/2;
+                            nutrientLevel = 0;
                             GameObject thisAutotroph = Instantiate (autotroph_prefab, zygotePosition, transform.rotation);
                             thisAutotroph.GetComponent<Autotroph_main>().nutrientLevel = sumNutrients;
                             thisAutotroph.GetComponent<Autotroph_main>().generation = generation;
-                            autoTrophSpawned = true;
+                            
                     }
-                    
+                            gameteScripts.Remove(this);
                             Destroy(gameObject, 0.2f);
                 }
                         
@@ -94,7 +108,7 @@ public class GameteMain : MonoBehaviour
     void OnDestroy(){
         
              
-            gameteScripts.Remove(this);
+            
     }
 }
 

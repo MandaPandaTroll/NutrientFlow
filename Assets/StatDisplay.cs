@@ -8,10 +8,10 @@ public class StatDisplay : MonoBehaviour
 
    
 
-    int tSteps;
+    public  static int tSteps;
     public bool doReset{get;set;}
     float meanGen;
-   public float tSecs;
+   public static float tSecs;
 
     public float statUpdatePeriod;
     float statUpdateTimer;
@@ -61,5 +61,7 @@ public class StatDisplay : MonoBehaviour
             statUpdateTimer = 0;
         }
     }
+
+    
     
 }
