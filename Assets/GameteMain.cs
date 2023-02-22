@@ -74,7 +74,7 @@ public class GameteMain : MonoBehaviour
             }else if(chemotaxisEnabled == false){
                 otherGametes = Physics2D.OverlapCircleAll(transform.position,interactionRadius, gameteMask);
             }
-
+            //problematic
             if(incompatibilityEnabled == false){
                 GameteMain otherGamete_script;
                 
