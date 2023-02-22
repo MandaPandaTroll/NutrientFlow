@@ -25,8 +25,8 @@ public class GameteMain : MonoBehaviour
     
     public bool incompatibilityEnabled;
     public float interactionRadius;
-    public float actionFrequency;
-   public float actionTimer;
+    public int actionFrequency;
+   public int actionTimer;
    public int nutrientLevel;
    public int numSteps;
    public int maximumLifeSpan;
@@ -55,19 +55,20 @@ public class GameteMain : MonoBehaviour
     void FixedUpdate()
     {
         numSteps += 1;
-        
+        actionTimer += 1;
         if(numSteps >= maximumLifeSpan){
             cellValue = nutrientgrid.GetValue(transform.position);
             nutrientgrid.SetValue(transform.position, cellValue+nutrientLevel);
             nutrientLevel = 0;
+            gameteScripts.Remove(this);
             Destroy(gameObject, 0.5f);
         }
 
-        actionTimer += Time.fixedDeltaTime;
+        
 
         //Actions are taken each time the actionTimer reaches a pre-defined value
         if(actionTimer >= actionFrequency){
-
+            actionTimer = 0;
             if(chemotaxisEnabled == true){
                 otherGametes = Physics2D.OverlapCircleAll(transform.position,perceptionRadius, gameteMask);
             }else if(chemotaxisEnabled == false){
@@ -82,15 +83,18 @@ public class GameteMain : MonoBehaviour
                     if(otherGamete_script.autoTrophSpawned == false){
                         autoTrophSpawned = true;
                         Vector2 zygotePosition = (transform.position + otherGamete_script.transform.position)/2f;
-                            sumNutrients = (nutrientLevel + otherGamete_script.nutrientLevel)/2;
+                            sumNutrients = nutrientLevel*2;
                             nutrientLevel = 0;
+                            otherGamete_script.nutrientLevel = 0;
                             GameObject thisAutotroph = Instantiate (autotroph_prefab, zygotePosition, transform.rotation);
                             thisAutotroph.GetComponent<Autotroph_main>().nutrientLevel = sumNutrients;
                             thisAutotroph.GetComponent<Autotroph_main>().generation = generation;
                             
                     }
                             gameteScripts.Remove(this);
-                            Destroy(gameObject, 0.2f);
+                            gameteScripts.Remove(otherGamete_script);
+                            Destroy(otherGamete_script.gameObject,0.5f);
+                            Destroy(gameObject, 0.5f);
                 }
                         
                             
@@ -101,7 +105,7 @@ public class GameteMain : MonoBehaviour
             
 
 
-            actionTimer = 0;
+            
         }
     }
 
