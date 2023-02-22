@@ -91,15 +91,16 @@ public class GameteMain : MonoBehaviour
                             nutrientLevel = 0;
                             otherGamete_script.nutrientLevel = 0;
                             Destroy(otherGamete_script.gameObject);
-                            
+                            gameteScripts.Remove(otherGamete_script);
                             GameObject thisAutotroph = Instantiate (autotroph_prefab, zygotePosition, transform.rotation);
                             thisAutotroph.GetComponent<Autotroph_main>().nutrientLevel = sumNutrients;
                             thisAutotroph.GetComponent<Autotroph_main>().generation = generation;
+                            gameteScripts.Remove(this);
                             Destroy(gameObject);
                             
                     }
-                            gameteScripts.Remove(this);
-                            gameteScripts.Remove(otherGamete_script);
+                            
+                            
                             
                             
                 }

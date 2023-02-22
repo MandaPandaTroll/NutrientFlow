@@ -141,7 +141,7 @@ MonoBehaviour:
   perceptionRadius: 0
   incompatibilityEnabled: 0
   interactionRadius: 3
-  actionFrequency: 64
+  actionFrequency: 128
   actionTimer: 0
   nutrientLevel: 0
   numSteps: 0
