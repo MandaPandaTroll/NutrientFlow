@@ -86,6 +86,7 @@ public class Autotroph_main : MonoBehaviour
         movementSpeed = maxMovementSpeed*currentMaturity;
         movementCost = maxMovementCost*currentMaturity;
         turningCost = maxTurningCost*currentMaturity;
+        GameteMain.zygoteNutrients = gameteCost_nutrient*2;
     }
 
    

@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class GameteMain : MonoBehaviour
 {
-
+    
     public struct gamete{
     public enum gameteType{A, B, C}
     public bool motile;
     public bool perceptive;
     
     }
+    public static int zygoteNutrients;
     public static List<GameteMain> gameteScripts = new List<GameteMain>();
     
                                                         //   A  ,  B ,  C
@@ -58,7 +59,7 @@ public class GameteMain : MonoBehaviour
     {
         numSteps += 1;
         actionTimer += 1;
-        if(numSteps >= maximumLifeSpan){
+        if(numSteps >= maximumLifeSpan && isActing == false){
             cellValue = nutrientgrid.GetValue(transform.position);
             nutrientgrid.SetValue(transform.position, cellValue+nutrientLevel);
             nutrientLevel = 0;
