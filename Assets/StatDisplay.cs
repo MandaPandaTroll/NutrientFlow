@@ -16,7 +16,7 @@ public class StatDisplay : MonoBehaviour
     public float statUpdatePeriod;
     float statUpdateTimer;
 
-    public Text tSecText, tStepText, meanGenText, totNuteText, freeNuteText,lockedNuteText, nAutoText, nGameteText;
+    public Text tSecText, tStepText, meanGenText, totNuteText, freeNuteText,lockedNuteText, autoNuteText,gamNuteText, nAutoText, nGameteText, diffusionRateText, generationStDevText;
     
     // Start is called before the first frame update
     void Start()
@@ -50,14 +50,18 @@ public class StatDisplay : MonoBehaviour
         tSecs += Time.fixedDeltaTime;
         statUpdateTimer += Time.deltaTime;
         if(statUpdateTimer >= statUpdatePeriod){
-            tSecText.text = Mathf.FloorToInt(tSecs).ToString();
-            tStepText.text = tSteps.ToString();
-            totNuteText.text = nutrientStats.totalNutrients.ToString();
-            freeNuteText.text = nutrientStats.freeNutrients.ToString();
-            lockedNuteText.text = nutrientStats.lockedNutrients.ToString();
-            nAutoText.text = IndividualStats.GetNAutos().ToString();
-            nGameteText.text = GameteStats.GetNGamete().ToString();
-            meanGenText.text = IndividualStats.GetMeanGeneration().ToString();
+            tSecText.text = "Seconds" + "\n" + Mathf.FloorToInt(tSecs).ToString();
+            tStepText.text = "Steps" + "\n" + tSteps.ToString();
+            totNuteText.text = "Total" + "\n" + "Nutrients" + "\n" +nutrientStats.totalNutrients.ToString();
+            freeNuteText.text = "Free" + "\n" + "Nutrients" + "\n" + nutrientStats.freeNutrients.ToString();
+            lockedNuteText.text = "Locked"+ "\n" + "Nutrients" + "\n" +nutrientStats.lockedNutrients.ToString();
+            autoNuteText.text = "Autotroph"+ "\n" + "Nutrients" + "\n" +IndividualStats.GetSumNutrients().ToString();
+            gamNuteText.text = "Gamete"+ "\n" + "Nutrients" + "\n" +GameteStats.GetSumNutrients().ToString();
+            nAutoText.text = "Autotrophs" + "\n" + IndividualStats.GetNAutos().ToString();
+            nGameteText.text = "Gametes" + "\n" + GameteStats.GetNGamete().ToString();
+            meanGenText.text = "Mean" + "\n" + "generation" +  "\n" +IndividualStats.GetMeanGeneration().ToString();
+            generationStDevText.text = "SD" + "\n" + "generation" +  "\n" +ExtraMath.GetGenerationStDev(IndividualStats.GetGenerationVals()).ToString();
+            diffusionRateText.text = "Diffusion"+ "\n" + "Period(step)" + "\n" + DiscreteGrid.diffusionRate.ToString();
             statUpdateTimer = 0;
         }
     }

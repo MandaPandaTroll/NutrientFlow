@@ -44,7 +44,23 @@ public class IntGrid{
         if(x >= 0 && y >= 0 && x < width && y < height){
             if(value < 0){value = 0;}
             gridArray[x, y] = value;
+        }
+        else {
+            int tempx = 0;
+            int tempy = 0;
+            if (x < 0){
+                tempx = 0;
+            } else if (x >= width){
+                tempx = width-1;
+            }
+
+            if (y < 0){
+                tempy = 0;
+            } else if (y >= height){
+                tempy = height-1;
+            }
             
+             gridArray[tempx,tempy] = value;
         }
     }
 
@@ -59,6 +75,21 @@ public class IntGrid{
         if(x >= 0 && y >= 0 && x < width && y < height){
             return gridArray[x , y];
         }else {
+            /*
+            int tempx = 0;
+            int tempy = 0;
+            if (x < 0){
+                tempx = 0;
+            } else if (x >= width){
+                tempx = width-1;
+            }
+
+            if (y < 0){
+                tempy = 0;
+            } else if (y >= height){
+                tempy = height-1;
+            }
+            */
             return 0;
         }
     }
@@ -67,15 +98,15 @@ public class IntGrid{
         if(x >= 1 && y >= 1 && x < width-1 && y < height-1){
             int[,] internalKernel = new int[3,3];
 
-    internalKernel[0, 2] = gridArray[x - 1, y + 1];  // Top left
-    internalKernel[1, 2] = gridArray[x + 0, y + 1];  // Top center
-    internalKernel[2, 2] = gridArray[x + 1, y + 1];  // Top right
-    internalKernel[0, 1] = gridArray[x - 1, y + 0];  // Mid left
-    internalKernel[1, 1] = gridArray[x + 0, y + 0];  // Current pixel
-    internalKernel[2, 1] = gridArray[x + 1, y + 0];  // Mid right
-    internalKernel[0, 0] = gridArray[x - 1, y - 1];  // Low left
-    internalKernel[1, 0] = gridArray[x + 0, y - 1];  // Low center
-    internalKernel[2, 0] = gridArray[x + 1, y - 1];  // Low right
+    internalKernel[0, 2] = GetValue(x - 1, y + 1);  // Top left
+    internalKernel[1, 2] = GetValue(x + 0, y + 1);  // Top center
+    internalKernel[2, 2] = GetValue(x + 1, y + 1);  // Top right
+    internalKernel[0, 1] = GetValue(x - 1, y + 0);  // Mid left
+    internalKernel[1, 1] = GetValue(x + 0, y + 0);  // Current pixel
+    internalKernel[2, 1] = GetValue(x + 1, y + 0);  // Mid right
+    internalKernel[0, 0] = GetValue(x - 1, y - 1);  // Low left
+    internalKernel[1, 0] = GetValue(x + 0, y - 1);  // Low center
+    internalKernel[2, 0] = GetValue(x + 1, y - 1);  // Low right
     
     return internalKernel;
 

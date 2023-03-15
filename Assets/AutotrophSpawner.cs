@@ -20,11 +20,11 @@ public class AutotrophSpawner : MonoBehaviour
     void Start()
     {
         initialPopulationSize = initPopInputField.value;
-        if (initialSpawnRange > 0.9f){
-            initialSpawnRange = 0.9f;
+        if (initialSpawnRange > 1.0f){
+            initialSpawnRange = 1.0f;
         }
-       boxWidth = box.transform.localScale.x;
-       boxHeight = box.transform.localScale.y;
+       boxWidth = box.transform.localScale.x/2f;
+       boxHeight = box.transform.localScale.y/2f;
        realisedSpawnRange = new Vector2(boxWidth*initialSpawnRange, boxHeight*initialSpawnRange);
         
     }
@@ -38,13 +38,19 @@ public class AutotrophSpawner : MonoBehaviour
         }
         
     }
+    Autotroph_main thisAutotroph_script;
     public void SpawnAutotrophs(){
+        realisedSpawnRange = new Vector2(boxWidth*initialSpawnRange, boxHeight*initialSpawnRange);
         for(int i = 0; i < initialPopulationSize;i++){
             Quaternion tempRotation = Quaternion.Euler(0,0,Random.Range(-180f,180f));
 
             Vector3 tempSpawnPosition = new Vector3(Random.Range(-realisedSpawnRange.x,realisedSpawnRange.x),Random.Range(-realisedSpawnRange.y,realisedSpawnRange.y), 0);
             thisAutotroph = Instantiate(autotroph_prefab,tempSpawnPosition, tempRotation);
-            thisAutotroph.GetComponent<Autotroph_main>().nutrientLevel = initialNutrientLevel;
+            thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
+            thisAutotroph_script.nutrientLevel = initialNutrientLevel;
+            thisAutotroph_script.currentMaturity = Random.Range(0,1f);
+            thisAutotroph_script.age = Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);
+            thisAutotroph_script.parentGametes = new int[2]{-1,-1};
         }
         spawnAutos = false;
     }
