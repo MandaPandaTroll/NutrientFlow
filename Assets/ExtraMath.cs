@@ -3,7 +3,7 @@ using System;
 
 public  class ExtraMath{
 
-
+public static System.Random RandGen = new System.Random();
 public static float GetNormal(double mean, double stdDev){
     //By yoyoyoyosef, stackoverflow  Jan 2017
 Random rand = new Random(); //reuse this if you are generating many
@@ -49,6 +49,17 @@ public static float GetGenerationStDev( int[] generationVals){
 
 }
 
+
+public static int[] randomDirectionValues = new int[4096];
+
+public static int[] fillRandomDirectionValues(){
+    int[] output = new int[4096];
+    for(int i = 0; i < 4095; i++){
+        output[i] = RandGen.Next(1,5);
+    }
+    return output;
+
+}
  
     
 }

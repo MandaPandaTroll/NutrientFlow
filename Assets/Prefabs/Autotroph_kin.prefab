@@ -334,30 +334,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb1d08e6da20d4839bc8d8d00545978a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InheritedLifeSpanToggle: 1
+  InheritedLifeSpanToggle: 0
   AsexualReproductionEnabled: 0
   parentGametes: 
   individualNumber: 0
   generation: 0
-  baseCost_energy: 1
+  baseCost_energy: 2
   growthCost_energy: 1
-  gameteCost_energy: 32
-  energySynthase_UpkeepCost_energy: 4
-  maxMovementCost: 1
-  movementCost: 1
+  gameteCost_energy: 24
+  energySynthase_UpkeepCost_energy: 1
+  maxMovementCost: 0.5
+  movementCost: 0.5
   maxTurningCost: 0.5
   turningCost: 0.5
   perNutrientAbsorptionCost: 0.1
-  baseCost_nutrient: 1
+  baseCost_nutrient: 0
   growthCost_nutrient: 1
   gameteCost_nutrient: 1
-  energySynthase_UpkeepCost_nutrient: 1
+  energySynthase_UpkeepCost_nutrient: 2
   asexualCost_nutrient: 0
   asexualCost_energy: 0
   masterFrequency: 1
   catabolicFrequency: 256
   actionFrequency: 1
-  anabolicFrequency: 1
+  anabolicFrequency: 128
   photosyntheticFrequency: 6
   energyLevel: 0
   energySynthase_Integrity: 1
@@ -367,13 +367,13 @@ MonoBehaviour:
   spentNutrients: 0
   age: 0
   energy_init: 256
-  growthRate: 0.1
+  growthRate: 0.25
   maxMovementSpeed: 0.015
   energySynthase_DecayAmount: 0.01
-  maxTurnAngle: 10
-  turnProbability: 0.1
+  maxTurnAngle: 90
+  turnProbability: 0.01
   energySynthase_restoreAmount: 0.01
-  baseEnergyProduction: 8
+  baseEnergyProduction: 4
   maxNutrients: 1024
   maximumLifeSpan: 0
   absorptionRate: 6

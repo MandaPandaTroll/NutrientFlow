@@ -48,8 +48,8 @@ public class AutotrophSpawner : MonoBehaviour
             thisAutotroph = Instantiate(autotroph_prefab,tempSpawnPosition, tempRotation);
             thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
             thisAutotroph_script.nutrientLevel = initialNutrientLevel;
-            thisAutotroph_script.currentMaturity = Random.Range(0,1f);
-            thisAutotroph_script.age = Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);
+            thisAutotroph_script.currentMaturity = 1f;//Random.Range(0,1f);
+            thisAutotroph_script.age = thisAutotroph_script.maximumLifeSpan/2;//Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);
             thisAutotroph_script.parentGametes = new int[2]{-1,-1};
         }
         spawnAutos = false;

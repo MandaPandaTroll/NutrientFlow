@@ -213,7 +213,7 @@ public static List<float> reproductiveEnergies = new List<float>();
 
             if(currentMaturity >= 0.99f && age >= minimumMaturityAge){
                 if(AsexualReproductionEnabled == false){
-                    if( energyLevel >= gameteCost_energy*16f && nutrientLevel >= gameteCost_nutrient*4){
+                    if( energyLevel >= gameteCost_energy*16f && nutrientLevel >= gameteCost_nutrient*8){
                     ProduceGamete();
                     }
                 }else if(AsexualReproductionEnabled == true){

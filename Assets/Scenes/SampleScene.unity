@@ -1888,6 +1888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoRemoveNutrients: 0
+  EquilibriumQuit: 1
   displayDiffusionRate: 0
   initDiffusionEnabled: 1
   boxTransform: {fileID: 1613774633}
@@ -1896,14 +1897,17 @@ MonoBehaviour:
   cellSize: 1
   initialConcentration: 0
   nutrientSampleRate: 0.1
-  removePeriod: 1
+  removePeriod: 64
   removeTimer: 0
-  spawnInMiddle: 1
+  spawnInMiddle: 0
   veryRandomSpawn: 0
   defaultSpawn: 0
+  uniformSpawn: 1
+  circleSpawn: 0
+  spawnCircleRadius: 128
   nutesToSpawn: 0
   diffusionEnabled: 0
-  diffusionLimit: 0
+  diffusionLimit: 1
   numCells: 0
   maxPerVeryRandomSpawnDivisor: 64
   statisticsWriter: {fileID: 638938759}
@@ -3061,7 +3065,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 978343263}
-  defaultValue: 0
+  defaultValue: 8
 --- !u!114 &978343263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3452,7 +3456,7 @@ MonoBehaviour:
   m_MinValue: 2
   m_MaxValue: 10000
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 128
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -5636,7 +5640,7 @@ MonoBehaviour:
   initPopInputField: {fileID: 978343262}
   initialNutrientLevel: 0
   initialPopulationSize: 0
-  initialSpawnRange: 0.9
+  initialSpawnRange: 0.01
   box: {fileID: 1613774631}
 --- !u!114 &1683066735
 MonoBehaviour:
@@ -5650,8 +5654,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61a382b959db4606afa781b0e95d351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meanMaximumLifeSpan: 1024
-  std_lifeSpan: 256
+  meanMaximumLifeSpan: 2048
+  std_lifeSpan: 128
+  autoStart: 1
+  autoStartTimer: 0
+  autoStartDelay: 256
+  LogTimePeriod: 512
+  startButton: {fileID: 345027977}
 --- !u!1 &1691054297
 GameObject:
   m_ObjectHideFlags: 0

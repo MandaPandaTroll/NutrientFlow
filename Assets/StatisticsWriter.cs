@@ -24,6 +24,23 @@ public  class StatisticsWriter : MonoBehaviour{
 
     public static int[,] sampleGrid;
     void Start(){
+        if(Directory.Exists(getZipPath()+gridPath)){
+            Directory.Delete(getZipPath()+gridPath,true);
+        }
+        if(Directory.Exists(getZipPath()+popPath)){
+            Directory.Delete(getZipPath()+popPath,true);
+        }
+        if(Directory.Exists(getZipPath()+posPath)){
+            Directory.Delete(getZipPath()+posPath,true);
+        }
+        if(Directory.Exists(getZipPath()+repPath)){
+            Directory.Delete(getZipPath()+repPath,true);
+        }
+
+        Directory.CreateDirectory(getZipPath()+gridPath);
+        Directory.CreateDirectory(getZipPath()+popPath);
+        Directory.CreateDirectory(getZipPath()+posPath);
+        Directory.CreateDirectory(getZipPath()+repPath);
         deaths_individual = 0;
         deaths_gamete = 0;
         zygotesFormed = 0;
@@ -56,6 +73,13 @@ public  class StatisticsWriter : MonoBehaviour{
         rowData_gametePos = new List<string[]>();
         rowData_repStat = new List<string[]>();
         rowData_stats = new List<string[]>();
+        Debug.Log(
+        "gridSampleFrequency = "+ gridSampleFrequency + "\n" +
+        "statSampleFrequency = "+ statSampleFrequency + "\n" + 
+        "autoPosSampleFreq = "+ autoPosSampleFreq + "\n" +
+        "gamPosSampleFreq = "+ gamPosSampleFreq + "\n" +
+        "repStatFreq = "+ repStatFreq + "\n" +
+        "DiffusionPeriod = " + Mathf.FloorToInt(DiscreteGrid.fDiffusionRate));
     }
 void FixedUpdate(){
 
@@ -93,13 +117,14 @@ if (repStatTimer >= repStatFreq){
             WriteReproductiveData(Autotroph_main.individuals);
             
         }
-    if(compGridDataTimer >= compGridDataFreq){
+    if(compGridDataTimer >= compGridDataFreq && CompressionEnabled){
+        compGridDataTimer = 0;
         CompressGridData();
     }
 
     
 }
-
+public bool CompressionEnabled;
 public static int[] gridDims = new int[2];
 
 

@@ -8,7 +8,7 @@ public class DiscreteGrid : MonoBehaviour
 {
     public bool autoRemoveNutrients;
 
-   
+   public bool EquilibriumQuit;
     //public int initDiffusionRate;
  
     public static int diffusionRate{get;set;}
@@ -33,6 +33,9 @@ public class DiscreteGrid : MonoBehaviour
     public bool spawnInMiddle;
     public bool veryRandomSpawn;
     public bool defaultSpawn;
+    public bool uniformSpawn;
+    public bool circleSpawn;
+    public float spawnCircleRadius;
     public int nutesToSpawn;
     public bool diffusionEnabled;
     public int diffusionLimit;
@@ -59,10 +62,12 @@ public class DiscreteGrid : MonoBehaviour
         
         
    }
+   int randArrLength;
     void Start()
     {
 
-        
+        ExtraMath.randomDirectionValues = ExtraMath.fillRandomDirectionValues();
+        randArrLength = ExtraMath.randomDirectionValues.Length;
         fDiffusionRate = diffRateSlider.value;
         diffusionRate = Mathf.FloorToInt(fDiffusionRate);
         if(diffusionRate <= 0){
@@ -115,6 +120,67 @@ public class DiscreteGrid : MonoBehaviour
         
         if(nutesSpawned == false){
             nutesLeft = nutesToSpawn;
+            if(circleSpawn && !uniformSpawn && !veryRandomSpawn && !defaultSpawn && !spawnInMiddle){
+                while(nutesLeft > 0){
+                    float randAngle = Random.Range(0,2f*Mathf.PI);
+                    float randMagnitude = Random.Range(-spawnCircleRadius,spawnCircleRadius);
+                    float testX = Mathf.Cos(randAngle);
+                    float testY = Mathf.Sin(randAngle);
+                    Vector2 randPos = new Vector2(testX,testY)*randMagnitude;
+                    if(nutesLeft > 0){
+                        nutrientGrid.SetValue(randPos,nutrientGrid.GetValue(randPos)+1);
+                        nutesLeft -= 1;
+                    }
+                }
+            }
+
+        if(uniformSpawn == true && !veryRandomSpawn && !defaultSpawn && !spawnInMiddle){
+            int initC = 0;
+            if(initialConcentration >= 1){
+                 initC = Mathf.RoundToInt(initialConcentration);
+                 for(int i = 0; i < gridWidth; i++){
+                for(int j = 0; j < gridHeight; j++){
+                    nutrientGrid.gridArray[i,j] = initC;
+                }
+            }
+            }else if(initialConcentration < 1){
+                int putVal = 0;
+                int spacerLength = Mathf.RoundToInt(1f/initialConcentration);
+                int spacerCount = 0;
+                for(int i = 0; i < gridWidth; i++){
+                for(int j = gridHeight-1; j > 0; j--){
+                    if( spacerCount % spacerLength == 0){
+                        putVal = 1;
+                        
+                        nutrientGrid.gridArray[i,j] = putVal;
+                    }
+                    spacerCount +=1;
+                    
+                }
+            }
+            }
+            
+            
+                /*for(int i = 0; i < gridWidth; i++){
+                    if(nutesLeft < initC){
+                        break;
+                    }else{
+                        for(int j = 0; j < gridHeight; j++){
+                    if(nutesLeft < initC){
+                        break;
+                    }else{
+                        int thisVal = nutrientGrid.GetValue(i,j);
+                        nutrientGrid.SetValue(i,j,thisVal+initC);
+                        nutesLeft -= initC;
+                    }
+                }
+                }
+                
+            }*/
+            
+            
+        }
+
          if(spawnInMiddle == true && !veryRandomSpawn && !defaultSpawn){
             nutrientGrid.SetValue(gridWidth/2,gridHeight/2,nutesToSpawn);
 
@@ -237,7 +303,7 @@ public class DiscreteGrid : MonoBehaviour
 
 
 int[,] kernel = new int[3,3];
-
+int zeroes;
 void DefaultDiffusion(){
             displayDiffusionRate = diffusionRate;
             //statisticsWriter.WriteNutrientGrid(nutrientGrid.gridArray);
@@ -245,10 +311,10 @@ void DefaultDiffusion(){
            
             
 
-            int dirs = UnityEngine.Random.Range(1,5);
+            int dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
             if(dirCounter == 0){
-                for(int x = 0; x < gridWidth; x++){
-                    for(int y = 0; y < gridHeight; y++){
+                for(int x = 1; x < gridWidth-1; x++){
+                    for(int y = 1; y < gridHeight-1; y++){
                     
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
@@ -266,7 +332,7 @@ void DefaultDiffusion(){
 
                     
                     int value = -1;
-                    dirs = Random.Range(1,5);
+                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -355,8 +421,8 @@ void DefaultDiffusion(){
                 }
                 dirCounter = 1;
             }else if(dirCounter == 1){
-                for(int x = gridWidth; x > 0; x--){
-                for(int y = gridHeight; y > 0; y--){
+                for(int x = gridWidth-1; x > 1; x--){
+                for(int y = gridHeight-1; y > 1; y--){
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
                      //   break;
@@ -374,7 +440,7 @@ void DefaultDiffusion(){
 
                     
  
-                    dirs = Random.Range(1,5);
+                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -463,8 +529,8 @@ void DefaultDiffusion(){
             }
                 dirCounter = 2;
             }else if(dirCounter == 2){
-                for(int x = gridWidth; x > 0; x--){
-                for(int y = 0; y < gridHeight; y++){
+                for(int x = gridWidth-1; x > 1; x--){
+                for(int y = 1; y < gridHeight-1; y++){
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
                      //   break;
@@ -482,7 +548,7 @@ void DefaultDiffusion(){
 
                     
  
-                    dirs = Random.Range(1,5);
+                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -570,8 +636,8 @@ void DefaultDiffusion(){
             }
                 dirCounter = 3;
             }else if(dirCounter == 3){
-                for(int x = 0; x < gridWidth; x++){
-                for(int y = gridHeight; y > 0; y--){
+                for(int x = 1; x < gridWidth-1; x++){
+                for(int y = gridHeight-1; y > 1; y--){
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
                      //   break;
@@ -589,7 +655,7 @@ void DefaultDiffusion(){
 
                     
  
-                    dirs = Random.Range(1,5);
+                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -685,6 +751,19 @@ void DefaultDiffusion(){
             
             
          
+        if(EquilibriumQuit == true){
+             zeroes = 0;
+                for(int i = 1; i< gridWidth-2; i++){
+                    for(int j = 1; j< gridHeight-2; j++){
+                    if(nutrientGrid.gridArray[i,j] == 0){
+                        zeroes += 1;
+                    }
+                }
+                }
+                if (zeroes == 0){
+                    Application.Quit();
+                }
+            }
 
         diffusionTimer = 0;
         
@@ -711,6 +790,8 @@ int lastNutes, lastFree, lastLocked;
             nutrientStats.totalNutrients = tempTotal;
             nutrientStats.freeNutrients = tempFree;
             nutrientStats.lockedNutrients = tempLocked;
+
+            
             
             sampleTimer = 0;
     }
@@ -751,8 +832,10 @@ public static void CalculateDiffusionRate(){
 int GetFancyDiffusion(int input){
     int maxout;
     
-    if(input/4 > 1){
-        maxout = (Mathf.FloorToInt(Mathf.Sqrt((float) input)));
+
+    
+    if(input > 2){
+        maxout = (Mathf.RoundToInt(Mathf.Sqrt((float) input)));
         
     }else{maxout = 1;}
     
