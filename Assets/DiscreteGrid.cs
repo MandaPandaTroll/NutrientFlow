@@ -62,12 +62,11 @@ public class DiscreteGrid : MonoBehaviour
         
         
    }
-   int randArrLength;
+   
     void Start()
     {
 
-        ExtraMath.randomDirectionValues = ExtraMath.fillRandomDirectionValues();
-        randArrLength = ExtraMath.randomDirectionValues.Length;
+        
         fDiffusionRate = diffRateSlider.value;
         diffusionRate = Mathf.FloorToInt(fDiffusionRate);
         if(diffusionRate <= 0){
@@ -311,7 +310,7 @@ void DefaultDiffusion(){
            
             
 
-            int dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
+            int dirs = UnityEngine.Random.Range(1,5);
             if(dirCounter == 0){
                 for(int x = 1; x < gridWidth-1; x++){
                     for(int y = 1; y < gridHeight-1; y++){
@@ -332,7 +331,7 @@ void DefaultDiffusion(){
 
                     
                     int value = -1;
-                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
+                    dirs = Random.Range(1,5);
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -440,7 +439,7 @@ void DefaultDiffusion(){
 
                     
  
-                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
+                    dirs = Random.Range(1,5);
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -548,7 +547,7 @@ void DefaultDiffusion(){
 
                     
  
-                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
+                    dirs = Random.Range(1,5);
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){
@@ -655,7 +654,7 @@ void DefaultDiffusion(){
 
                     
  
-                    dirs = ExtraMath.randomDirectionValues[UnityEngine.Random.Range(0,randArrLength)];
+                    dirs = Random.Range(1,5);
                  switch(dirs){
                 case 1:
                 for (int i = 0; i  < 2; i++){

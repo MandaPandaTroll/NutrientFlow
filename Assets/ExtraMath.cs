@@ -50,16 +50,9 @@ public static float GetGenerationStDev( int[] generationVals){
 }
 
 
-public static int[] randomDirectionValues = new int[4096];
 
-public static int[] fillRandomDirectionValues(){
-    int[] output = new int[4096];
-    for(int i = 0; i < 4095; i++){
-        output[i] = RandGen.Next(1,5);
-    }
-    return output;
 
-}
+
  
     
 }
