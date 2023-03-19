@@ -58,7 +58,7 @@ public static List<float> reproductiveEnergies = new List<float>();
     Rigidbody2D m_Rigidbody2D;
 
     public GameObject Gamete;
-
+    public GameObject m_Autotroph;
 
     public Vector2 mapBounds;
     
@@ -99,6 +99,8 @@ public static List<float> reproductiveEnergies = new List<float>();
     {  
         if(AsexualReproductionEnabled == false){
             energyLevel = energy_init;
+        }else{
+            energyLevel = asexualCost_energy;
         }
         
         if(staticGameteCost != gameteCost_nutrient){
@@ -127,6 +129,8 @@ public static List<float> reproductiveEnergies = new List<float>();
    
     Vector2 position;
     public int cellValue;
+    int asexualCoolDownPeriod = 32;
+    int asexualCoolDownTimer = 0;
   
     void FixedUpdate()
     {
@@ -217,7 +221,11 @@ public static List<float> reproductiveEnergies = new List<float>();
                     ProduceGamete();
                     }
                 }else if(AsexualReproductionEnabled == true){
-                    if( energyLevel >= asexualCost_energy*2f && nutrientLevel >= asexualCost_nutrient*2){
+                    if(asexualCoolDownTimer > 0){
+                        asexualCoolDownTimer -= 1;
+                    }
+                    if( energyLevel >= asexualCost_energy*2f && nutrientLevel >= asexualCost_nutrient*2 && asexualCoolDownTimer <= 0){
+                        asexualCoolDownTimer = asexualCoolDownPeriod;
                         ProduceClone();
                     }
                     
@@ -353,17 +361,24 @@ public static List<float> reproductiveEnergies = new List<float>();
     }
 
     public void ProduceClone(){
-        Vector3 clonePosition = new Vector3(transform.position.x+Random.Range(-0.1f,0.1f),transform.position.y+Random.Range(-0.1f,0.11f),0f);
+        asexualCoolDownTimer = asexualCoolDownPeriod;
         nutrientLevel -= asexualCost_nutrient;
         energyLevel -= asexualCost_energy;
-        GameObject tempAutotroph = Instantiate(this.gameObject,clonePosition, transform.rotation);
-        clonesProduced += 1;
-        StatisticsWriter.zygotesFormed += 1;
+        Vector3 thisPos = this.gameObject.transform.position;
+        Vector3 clonePosition = new Vector3(thisPos.x+Random.Range(-0.5f,0.5f),thisPos.y+Random.Range(-0.5f,0.5f),0f);
+        
+        GameObject tempAutotroph = Instantiate(m_Autotroph,clonePosition, transform.rotation);
         Autotroph_main tempAutotrophScript = tempAutotroph.GetComponent<Autotroph_main>();
+        tempAutotrophScript.nutrientLevel = 0;
+        tempAutotrophScript.spentNutrients = 0;
         tempAutotrophScript.generation = generation + 1;
         tempAutotrophScript.parentGametes = new int[2]{individualNumber, individualNumber};
         tempAutotrophScript.nutrientLevel = asexualCost_nutrient;
         tempAutotrophScript.energyLevel = asexualCost_energy;
+        clonesProduced += 1;
+        StatisticsWriter.zygotesFormed += 1;
+        
+        
 
         if(InheritedLifeSpan == true){
             tempAutotrophScript.maximumLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal((double)maximumLifeSpan,1.0));

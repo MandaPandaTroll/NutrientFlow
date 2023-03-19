@@ -840,6 +840,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1683066735}
+        m_TargetAssemblyTypeName: GlobalSettings, Assembly-CSharp
+        m_MethodName: set_startButtonPressed
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 1128953412}
         m_TargetAssemblyTypeName: GlobalTimeControls, Assembly-CSharp
         m_MethodName: set_begin
@@ -1904,7 +1916,7 @@ MonoBehaviour:
   defaultSpawn: 0
   uniformSpawn: 1
   circleSpawn: 0
-  spawnCircleRadius: 128
+  spawnCircleRadius: 32
   nutesToSpawn: 0
   diffusionEnabled: 0
   diffusionLimit: 1
@@ -1931,13 +1943,14 @@ MonoBehaviour:
   autoPosSampleFreq: 512
   gamPosSampleFreq: 512
   repStatFreq: 512
-  compGridDataFreq: 900000
+  compGridDataFreq: 4096
   sampleToCSVTimer_nutrientGrid: 0
   sampleToCSVTimer_stats: 0
   autoPosTimer: 0
   gamPosTimer: 0
   repStatTimer: 0
   compGridDataTimer: 0
+  CompressionEnabled: 0
 --- !u!1 &672433217
 GameObject:
   m_ObjectHideFlags: 0
@@ -3065,7 +3078,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 978343263}
-  defaultValue: 8
+  defaultValue: 16
 --- !u!114 &978343263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3456,7 +3469,7 @@ MonoBehaviour:
   m_MinValue: 2
   m_MaxValue: 10000
   m_WholeNumbers: 1
-  m_Value: 128
+  m_Value: 8
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -5659,6 +5672,13 @@ MonoBehaviour:
   autoStart: 1
   autoStartTimer: 0
   autoStartDelay: 256
+  quitCheckPeriod: 32
+  quitCheckTimer: 0
+  QuitOnGlobalExtinction: 0
+  QuitAtTime: 0
+  quitTime: 4096
+  QuitAtGeneration: 0
+  quitGeneration: 64
   LogTimePeriod: 512
   startButton: {fileID: 345027977}
 --- !u!1 &1691054297

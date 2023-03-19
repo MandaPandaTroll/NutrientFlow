@@ -33,6 +33,7 @@ public class AutotrophSpawner : MonoBehaviour
     void Update()
     {   
         if(spawnAutos == true){
+            
             initialPopulationSize = initPopInputField.value;
             SpawnAutotrophs();
         }
@@ -40,7 +41,9 @@ public class AutotrophSpawner : MonoBehaviour
     }
     Autotroph_main thisAutotroph_script;
     public void SpawnAutotrophs(){
+        spawnAutos = false;
         realisedSpawnRange = new Vector2(boxWidth*initialSpawnRange, boxHeight*initialSpawnRange);
+        ParamLookup.initPop = initialPopulationSize;
         for(int i = 0; i < initialPopulationSize;i++){
             Quaternion tempRotation = Quaternion.Euler(0,0,Random.Range(-180f,180f));
 
@@ -49,7 +52,7 @@ public class AutotrophSpawner : MonoBehaviour
             thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
             thisAutotroph_script.nutrientLevel = initialNutrientLevel;
             thisAutotroph_script.currentMaturity = 1f;//Random.Range(0,1f);
-            thisAutotroph_script.age = thisAutotroph_script.maximumLifeSpan/2;//Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);
+            thisAutotroph_script.age = 0;//thisAutotroph_script.maximumLifeSpan/2;//Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);
             thisAutotroph_script.parentGametes = new int[2]{-1,-1};
         }
         spawnAutos = false;

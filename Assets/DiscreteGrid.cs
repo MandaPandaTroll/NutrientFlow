@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine.UI;
 public class DiscreteGrid : MonoBehaviour
 {
+    
     public bool autoRemoveNutrients;
 
    public bool EquilibriumQuit;
@@ -73,7 +74,8 @@ public class DiscreteGrid : MonoBehaviour
             diffusionRate = 1;
         }
         displayDiffusionRate = diffusionRate;
-        
+        ParamLookup.DiffusionPeriod = diffusionRate;
+        ParamLookup.diffusionLimit = diffusionLimit;
         diffusionEnabled = initDiffusionEnabled;
         originPosition = new Vector3(-boxTransform.localScale.x/2f,-boxTransform.localScale.y/2f,0f);
         
@@ -115,16 +117,21 @@ public class DiscreteGrid : MonoBehaviour
         
     }
  public int nutesLeft;
+ float[] plusMinus = new float[2]{-1f,1f};
     public void SpawnNutrients(int nutesToSpawn){
-        
+        ParamLookup.totalNutrients = nutesToSpawn;
+        ParamLookup.initConc = initialConcentration;
         if(nutesSpawned == false){
             nutesLeft = nutesToSpawn;
             if(circleSpawn && !uniformSpawn && !veryRandomSpawn && !defaultSpawn && !spawnInMiddle){
+                ParamLookup.initDistribution = "Circle";
+                ParamLookup.circleRadius = Mathf.FloorToInt(spawnCircleRadius);
+                float randAngle,randMagnitude,testX,testY;
                 while(nutesLeft > 0){
-                    float randAngle = Random.Range(0,2f*Mathf.PI);
-                    float randMagnitude = Random.Range(-spawnCircleRadius,spawnCircleRadius);
-                    float testX = Mathf.Cos(randAngle);
-                    float testY = Mathf.Sin(randAngle);
+                     randAngle = Random.Range(0,2f*Mathf.PI);
+                     randMagnitude = Random.Range(0,spawnCircleRadius)*plusMinus[Random.Range(0,2)];
+                     testX = Mathf.Cos(randAngle);
+                     testY = Mathf.Sin(randAngle);
                     Vector2 randPos = new Vector2(testX,testY)*randMagnitude;
                     if(nutesLeft > 0){
                         nutrientGrid.SetValue(randPos,nutrientGrid.GetValue(randPos)+1);
@@ -134,6 +141,7 @@ public class DiscreteGrid : MonoBehaviour
             }
 
         if(uniformSpawn == true && !veryRandomSpawn && !defaultSpawn && !spawnInMiddle){
+            ParamLookup.initDistribution = "Uniform";
             int initC = 0;
             if(initialConcentration >= 1){
                  initC = Mathf.RoundToInt(initialConcentration);
@@ -180,12 +188,13 @@ public class DiscreteGrid : MonoBehaviour
             
         }
 
-         if(spawnInMiddle == true && !veryRandomSpawn && !defaultSpawn){
+         if(spawnInMiddle == true && !veryRandomSpawn && !defaultSpawn && !uniformSpawn && !circleSpawn){
             nutrientGrid.SetValue(gridWidth/2,gridHeight/2,nutesToSpawn);
-
+            ParamLookup.initDistribution = "Middle";
         }
         
-        if(veryRandomSpawn == true && !spawnInMiddle && !defaultSpawn){
+        if(veryRandomSpawn == true && !spawnInMiddle && !defaultSpawn && !uniformSpawn && !circleSpawn){
+            ParamLookup.initDistribution = "Spotted Random";
             if (maxPerVeryRandomSpawnDivisor <= 0){
                 maxPerVeryRandomSpawnDivisor = 1;
             }
@@ -229,8 +238,8 @@ public class DiscreteGrid : MonoBehaviour
             
         }
         
-         if(defaultSpawn == true && !spawnInMiddle && !veryRandomSpawn){
-            
+         if(defaultSpawn == true && !spawnInMiddle && !veryRandomSpawn && !uniformSpawn && !circleSpawn){
+            ParamLookup.initDistribution = "Random";
             int randX, randY;
             int thisVal;
             for(int nutesLeft1 = nutesToSpawn; nutesLeft1 > 0; nutesLeft1--){
@@ -246,9 +255,11 @@ public class DiscreteGrid : MonoBehaviour
 
         }
         nutesSpawned = true;
+        
         }
         
-
+        StatisticsWriter.WriteParams();
+        
         StatisticsWriter.sampleGrid = nutrientGrid.gridArray;
         statisticsWriter.WriteNutrientGrid(nutrientGrid.gridArray);
     }
@@ -312,8 +323,8 @@ void DefaultDiffusion(){
 
             int dirs = UnityEngine.Random.Range(1,5);
             if(dirCounter == 0){
-                for(int x = 1; x < gridWidth-1; x++){
-                    for(int y = 1; y < gridHeight-1; y++){
+                for(int x = 0; x < gridWidth-1; x++){
+                for(int y = 0; y < gridHeight-1; y++){
                     
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
@@ -420,8 +431,8 @@ void DefaultDiffusion(){
                 }
                 dirCounter = 1;
             }else if(dirCounter == 1){
-                for(int x = gridWidth-1; x > 1; x--){
-                for(int y = gridHeight-1; y > 1; y--){
+                for(int x = gridWidth-1; x > 0; x--){
+                for(int y = gridHeight-1; y > 0; y--){
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
                      //   break;
@@ -528,8 +539,8 @@ void DefaultDiffusion(){
             }
                 dirCounter = 2;
             }else if(dirCounter == 2){
-                for(int x = gridWidth-1; x > 1; x--){
-                for(int y = 1; y < gridHeight-1; y++){
+                for(int x = gridWidth-1; x > 0; x--){
+                for(int y = 0; y < gridHeight-1; y++){
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
                      //   break;
@@ -635,8 +646,8 @@ void DefaultDiffusion(){
             }
                 dirCounter = 3;
             }else if(dirCounter == 3){
-                for(int x = 1; x < gridWidth-1; x++){
-                for(int y = gridHeight-1; y > 1; y--){
+                for(int x = 0; x < gridWidth-1; x++){
+                for(int y = gridHeight-1; y > 0; y--){
                     kernel = nutrientGrid.GetKernel(x,y);
                     //if(kernel.Cast<int>().Sum() == 0){
                      //   break;

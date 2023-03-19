@@ -335,11 +335,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InheritedLifeSpanToggle: 0
-  AsexualReproductionEnabled: 0
+  AsexualReproductionEnabled: 1
   parentGametes: 
   individualNumber: 0
   generation: 0
-  baseCost_energy: 2
+  baseCost_energy: 0
   growthCost_energy: 1
   gameteCost_energy: 24
   energySynthase_UpkeepCost_energy: 1
@@ -352,8 +352,8 @@ MonoBehaviour:
   growthCost_nutrient: 1
   gameteCost_nutrient: 1
   energySynthase_UpkeepCost_nutrient: 2
-  asexualCost_nutrient: 0
-  asexualCost_energy: 0
+  asexualCost_nutrient: 8
+  asexualCost_energy: 128
   masterFrequency: 1
   catabolicFrequency: 256
   actionFrequency: 1
@@ -377,12 +377,13 @@ MonoBehaviour:
   maxNutrients: 1024
   maximumLifeSpan: 0
   absorptionRate: 6
-  minimumMaturityAge: 256
+  minimumMaturityAge: 512
   maxGametes: 0
   maxGametesEnabled: 0
   turnDice: 0
   gametesProduced: 0
   clonesProduced: 0
   Gamete: {fileID: 2752296361011086610, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
+  m_Autotroph: {fileID: 5091997082272881867}
   mapBounds: {x: 0, y: 0}
   cellValue: 0

@@ -4,11 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Linq;
+
 using System.IO.Compression;
+
 public  class StatisticsWriter : MonoBehaviour{
 
-
+    
 
     public int gridSampleFrequency, statSampleFrequency, autoPosSampleFreq, gamPosSampleFreq, repStatFreq, compGridDataFreq;
    public  int sampleToCSVTimer_nutrientGrid, sampleToCSVTimer_stats, autoPosTimer, gamPosTimer, repStatTimer, compGridDataTimer;
@@ -20,10 +21,22 @@ public  class StatisticsWriter : MonoBehaviour{
    string popPath = "PopData";
    string posPath = "PositionData";
    string repPath = "RepData";
+   
 
 
     public static int[,] sampleGrid;
     void Start(){
+
+        ParamLookup.gridDims = gridDims;
+        
+        string writePath =  getZipPath()+"ZippedGridData/";
+        string readPath = getZipPath() + gridPath + "/";
+        
+        
+        
+        
+        
+
         if(Directory.Exists(getZipPath()+gridPath)){
             Directory.Delete(getZipPath()+gridPath,true);
         }
@@ -36,11 +49,33 @@ public  class StatisticsWriter : MonoBehaviour{
         if(Directory.Exists(getZipPath()+repPath)){
             Directory.Delete(getZipPath()+repPath,true);
         }
+        if(Directory.Exists(getZipPath()+writePath)){
+            Directory.Delete(getZipPath()+writePath,true);
+        }
+        if(File.Exists(getZipPath()+"params.txt")){
+            File.Delete(getZipPath()+"params.txt");
+        }
+
 
         Directory.CreateDirectory(getZipPath()+gridPath);
         Directory.CreateDirectory(getZipPath()+popPath);
         Directory.CreateDirectory(getZipPath()+posPath);
         Directory.CreateDirectory(getZipPath()+repPath);
+        
+        Directory.CreateDirectory(writePath);
+        if(File.Exists(writePath+"GridDatas.zip")){
+            File.Delete(writePath+"GridDatas.zip");}
+            //File.Create(writePath+"GridDatas.zip");
+            //Directory.CreateDirectory(writePath+"GridDatas");
+            //ZipFile.CreateFromDirectory(writePath,writePath+"GridDatas.zip");
+            //Directory.Delete(writePath+"GridDatas");
+            using (FileStream fs = File.Create(writePath+"GridDatas.zip"))
+            {
+                fs.Close();
+                fs.Dispose();
+            }
+        
+        
         deaths_individual = 0;
         deaths_gamete = 0;
         zygotesFormed = 0;
@@ -73,13 +108,13 @@ public  class StatisticsWriter : MonoBehaviour{
         rowData_gametePos = new List<string[]>();
         rowData_repStat = new List<string[]>();
         rowData_stats = new List<string[]>();
-        Debug.Log(
-        "gridSampleFrequency = "+ gridSampleFrequency + "\n" +
-        "statSampleFrequency = "+ statSampleFrequency + "\n" + 
-        "autoPosSampleFreq = "+ autoPosSampleFreq + "\n" +
-        "gamPosSampleFreq = "+ gamPosSampleFreq + "\n" +
-        "repStatFreq = "+ repStatFreq + "\n" +
-        "DiffusionPeriod = " + Mathf.FloorToInt(DiscreteGrid.fDiffusionRate));
+
+        ParamLookup.gridSamplePeriod = gridSampleFrequency;
+        ParamLookup.statSamplePeriod = statSampleFrequency;
+        ParamLookup.autoPosSamplePeriod = autoPosSampleFreq;
+        ParamLookup.gamPosSamplePeriod = gamPosSampleFreq;
+        ParamLookup.repStatSamplePeriod = repStatFreq;
+        
     }
 void FixedUpdate(){
 
@@ -121,6 +156,7 @@ if (repStatTimer >= repStatFreq){
         compGridDataTimer = 0;
         CompressGridData();
     }
+    
 
     
 }
@@ -138,6 +174,7 @@ List<string[]> rowData_gametePos = new List<string[]>();
 List<string[]> rowData_repStat = new List<string[]>();
 public  void WriteNutrientGrid(int[,] grid){
      rowData.Clear();   
+     
             
             string[] rowDataTemp;
              
@@ -185,7 +222,7 @@ public  void WriteNutrientGrid(int[,] grid){
         
         
             
-            string[] rowDataTemp = new string[13];
+            string[] rowDataTemp = new string[14];
             
             if(firstStat == false){
                 rowDataTemp[0] = "time_seconds";
@@ -201,6 +238,7 @@ public  void WriteNutrientGrid(int[,] grid){
                 rowDataTemp[10] = "deaths_gamete";
                 rowDataTemp[11] = "zygotesFormed";
                 rowDataTemp[12] = "gametes_total";
+                rowDataTemp[13] = "meanGeneration";
                 //statsHeaderCounter = 1;
                 //rowData_stats.Add(rowDataTemp);
                 firstStat = true;
@@ -219,6 +257,7 @@ public  void WriteNutrientGrid(int[,] grid){
                 rowDataTemp[10] = deaths_gamete.ToString();
                 rowDataTemp[11] = zygotesFormed.ToString();
                 rowDataTemp[12] = GameteMain.gameteCount.ToString();
+                rowDataTemp[13] = IndividualStats.GetMeanGeneration().ToString();
             }
             
             
@@ -485,29 +524,70 @@ void WriteGametePositions(){
         return Application.persistentDataPath+"/";
         #elif UNITY_STANDALONE_OSX
         return Application.dataPath+"/";
+        #elif UNITY_SERVER
+        return Application.dataPath+"/";
         #else
         return Application.dataPath +"/";
         #endif
     }
+
+    static string staticGetPath(){
+        #if UNITY_EDITOR
+        return Application.dataPath +"/CSV/";
+        #elif UNITY_ANDROID
+        return Application.persistentDataPath+"/";
+        #elif UNITY_STANDALONE_OSX
+        return Application.dataPath+"/";
+        #elif UNITY_SERVER
+        return Application.dataPath+"/";
+        #else
+        return Application.dataPath +"/";
+        #endif
+    }
+    
     void CompressGridData(){
         
-        string writePath = new string(getZipPath()+"ZippedGridData/");
-        string readPath = new string(getZipPath() + gridPath + "/");
+         compGridDataTimer = 0;
+        string writePath =  getZipPath()+"ZippedGridData/";
+        string readPath = getZipPath() + gridPath + "/";
+
+        string sourceDirectory = readPath;
+            string archiveDirectory = writePath;
+        //var files = Directory.EnumerateFiles(sourceDirectory, "*.csv", SearchOption.AllDirectories);
+
         
 
-        if(System.IO.File.Exists(writePath+"GridDatas"+zipNumber_nutrient+".zip")){
-            System.IO.File.Delete(writePath+"GridDatas"+zipNumber_nutrient+".zip");
-        }
-        ZipFile.CreateFromDirectory(readPath,writePath+"GridDatas"+zipNumber_nutrient+".zip");
+       var files = Directory.GetFiles(readPath);
         
-        foreach(string file in System.IO.Directory.GetFiles(readPath, "*.csv"))
-        {
-        System.IO.File.Delete(file);
+        
+        
+        using (FileStream zipToOpen = new FileStream(writePath+"GridDatas.zip", FileMode.Open)){
+            using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+            
+                {
+                    
+                    foreach(string file in files){
+                        
+                        ZipArchiveEntry entry = archive.CreateEntryFromFile(file,Path.GetFileName(file));
+                        //entry = File.Copy(file,)
+                    }
+                    archive.Dispose();
+                    zipToOpen.Close();
+                    zipToOpen.Dispose();
+                
+                }
+
+
+
+                
         }
-        foreach(string file in System.IO.Directory.GetFiles(readPath, " *.csv.meta"))
-        {
-        System.IO.File.Delete(file);
-        }
+        
+       
+       
+        Directory.Delete(readPath,true);
+        Directory.CreateDirectory(readPath);
+        
+        
         
 
         compGridDataTimer = 0;
@@ -522,6 +602,76 @@ public static Vector2 GetScaledPosition(Vector2 input){
     return output;
 }
 
+
+public static void WriteParams(){
+string path = StatisticsWriter.staticGetPath()+"params.txt";
+        if(File.Exists(path)){
+            File.Delete(path);
+        }
+        
+            
+            using (StreamWriter sw = File.CreateText(path))
+            {
+
+                sw.WriteLine("Parameter"+","+"Value");
+                sw.WriteLine("Grid width: " +","+ParamLookup.gridDims[0]+ "\n");
+                sw.WriteLine("Grid height: " +","+ParamLookup.gridDims[1]+ "\n");
+                sw.WriteLine("Mean global nutrient concentration: " +","+ ParamLookup.initConc + "\n");
+                sw.WriteLine("Total nutrients: "+","+ParamLookup.totalNutrients + "\n");
+                sw.WriteLine("Initial nutrient distribution: "+","+ParamLookup.initDistribution + "\n");
+                sw.WriteLine("Diffusion period: "+","+ParamLookup.DiffusionPeriod + "\n");
+                sw.WriteLine("Diffusion limit: "+","+ParamLookup.diffusionLimit + "\n");
+                sw.WriteLine("Initial population size: "+","+ParamLookup.initPop + "\n");
+                sw.WriteLine("Grid sample period: "+","+ParamLookup.gridSamplePeriod + "\n");
+                sw.WriteLine("PopStat sample period: "+","+ParamLookup.statSamplePeriod + "\n");
+                sw.WriteLine("Autotroph position sample period: "+","+ParamLookup.autoPosSamplePeriod + "\n");
+                sw.WriteLine("Gamete position sample period: "+","+ParamLookup.gamPosSamplePeriod + "\n");
+                sw.WriteLine("RepStat sample period: "+","+ParamLookup.repStatSamplePeriod);
+                sw.WriteLine("Quit on global extinction: "+","+ParamLookup.QuitOnGlobalExtinction);
+                sw.WriteLine("Quit at time: "+","+ParamLookup.QuitAtTime);
+                sw.WriteLine("Quit time: "+","+ParamLookup.quitTime);
+                sw.WriteLine("Quit at generation: "+","+ParamLookup.QuitAtGeneration);
+                sw.WriteLine("Quit generation: "+","+ParamLookup.quitGeneration);
+                if(ParamLookup.initDistribution == "Circle"){
+                    sw.WriteLine("Circle radius: "+","+ParamLookup.circleRadius);
+                }
+                
+                sw.Close();
+                sw.Dispose();
+
+                Debug.Log(
+                "–––––––––––––––––––––––––"+ "\n"+
+                "Grid dimensions: ["+ParamLookup.gridDims[0]+","+ParamLookup.gridDims[1]+"]" + "\n"+
+                "Mean global nutrient concentration: " + ParamLookup.initConc + "\n"+
+                "Total nutrients: "+ParamLookup.totalNutrients + "\n"+
+                "Initial nutrient distribution: "+ParamLookup.initDistribution + "\n"+
+                "Diffusion period: "+ParamLookup.DiffusionPeriod + "\n"+
+                "Diffusion limit: "+ParamLookup.diffusionLimit + "\n"+
+                "Initial population size: "+ParamLookup.initPop + "\n"+
+                "Grid sample period: "+ParamLookup.gridSamplePeriod + "\n"+
+                "PopStat sample period: "+ParamLookup.statSamplePeriod + "\n"+
+                "Autotroph position sample period: "+ParamLookup.autoPosSamplePeriod + "\n"+
+                "Gamete position sample period: "+ParamLookup.gamPosSamplePeriod + "\n"+
+                "RepStat sample period: "+ParamLookup.repStatSamplePeriod+ "\n"+
+                "Quit on global extinction: "+ParamLookup.QuitOnGlobalExtinction+ "\n"+
+                "Quit at time: "+ParamLookup.QuitAtTime+ "\n"+
+                "Quit time: "+ParamLookup.quitTime+ "\n"+
+                "Quit at generation: "+ParamLookup.QuitAtGeneration+ "\n"+
+                "Quit generation: "+ParamLookup.quitGeneration+ "\n"+
+                
+                "–––––––––––––––––––––––––"
+                );
+                if(ParamLookup.initDistribution == "Circle"){
+                Debug.Log("Circle radius: "+","+ParamLookup.circleRadius);
+                }
+            }	
+
+
 }
+
+}
+
+
+
 
 
