@@ -7,10 +7,10 @@ public class InputFieldToFloat : MonoBehaviour
 {
 
     public InputField inputField;
-    public static string fieldText{get;set;}
+    public  string fieldText{get;set;}
 
-    public static float value{get;set;}
-    public float defaultValue = 0;
+    public  float value{get;set;}
+    public float defaultValue{get;set;}
     // Start is called before the first frame update
     void Start()
     {

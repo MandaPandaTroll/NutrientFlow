@@ -3,6 +3,7 @@ using System.Linq;
 
 
 public class IntGrid{
+    static int[,] internalKernel = new int[3,3];
     public  int[,] zeroKernel = new int[3,3]{{0,0,0},{0,0,0},{0,0,0}};
     public int[,] gridArray;
     private int width;
@@ -96,18 +97,19 @@ public class IntGrid{
 
     public int[,] GetKernel(int x, int y){
         if(x >= 1 && y >= 1 && x < width-1 && y < height-1){
-            int[,] internalKernel = new int[3,3];
+            //int[,] internalKernel = new int[3,3];
 
-    internalKernel[0, 2] = GetValue(x - 1, y + 1);  // Top left
-    internalKernel[1, 2] = GetValue(x + 0, y + 1);  // Top center
-    internalKernel[2, 2] = GetValue(x + 1, y + 1);  // Top right
-    internalKernel[0, 1] = GetValue(x - 1, y + 0);  // Mid left
-    internalKernel[1, 1] = GetValue(x + 0, y + 0);  // Current pixel
-    internalKernel[2, 1] = GetValue(x + 1, y + 0);  // Mid right
-    internalKernel[0, 0] = GetValue(x - 1, y - 1);  // Low left
-    internalKernel[1, 0] = GetValue(x + 0, y - 1);  // Low center
-    internalKernel[2, 0] = GetValue(x + 1, y - 1);  // Low right
+    internalKernel[0, 2] = gridArray[x - 1, y + 1];  // Top left
+    internalKernel[1, 2] = gridArray[x + 0, y + 1];  // Top center
+    internalKernel[2, 2] = gridArray[x + 1, y + 1];  // Top right
+    internalKernel[0, 1] = gridArray[x - 1, y + 0];  // Mid left
+    internalKernel[1, 1] = gridArray[x + 0, y + 0];  // Current pixel
+    internalKernel[2, 1] = gridArray[x + 1, y + 0];  // Mid right
+    internalKernel[0, 0] = gridArray[x - 1, y - 1];  // Low left
+    internalKernel[1, 0] = gridArray[x + 0, y - 1];  // Low center
+    internalKernel[2, 0] = gridArray[x + 1, y - 1];  // Low right
     
+     
     return internalKernel;
 
         }else {

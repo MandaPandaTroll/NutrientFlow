@@ -1908,15 +1908,15 @@ MonoBehaviour:
   gridHeight: 0
   cellSize: 1
   initialConcentration: 0
-  nutrientSampleRate: 0.1
+  nutrientSampleRate: 1
   removePeriod: 64
   removeTimer: 0
-  spawnInMiddle: 0
+  spawnInMiddle: 1
   veryRandomSpawn: 0
   defaultSpawn: 0
-  uniformSpawn: 1
+  uniformSpawn: 0
   circleSpawn: 0
-  spawnCircleRadius: 32
+  spawnCircleRadius: 0.5
   nutesToSpawn: 0
   diffusionEnabled: 0
   diffusionLimit: 1
@@ -1925,6 +1925,7 @@ MonoBehaviour:
   statisticsWriter: {fileID: 638938759}
   diffRateSlider: {fileID: 1088746216}
   autoRespawnNutrientsEnabled: 0
+  initconcField: {fileID: 1273409922}
   nutesLeft: 0
 --- !u!114 &638938759
 MonoBehaviour:
@@ -1940,9 +1941,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridSampleFrequency: 512
   statSampleFrequency: 512
-  autoPosSampleFreq: 512
-  gamPosSampleFreq: 512
-  repStatFreq: 512
+  autoPosSampleFreq: 4096
+  gamPosSampleFreq: 4096
+  repStatFreq: 2048
   compGridDataFreq: 4096
   sampleToCSVTimer_nutrientGrid: 0
   sampleToCSVTimer_stats: 0
@@ -3078,7 +3079,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 978343263}
-  defaultValue: 16
 --- !u!114 &978343263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4589,7 +4589,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 1273409919}
-  defaultValue: 1
 --- !u!1 &1323453725
 GameObject:
   m_ObjectHideFlags: 0
@@ -5674,6 +5673,9 @@ MonoBehaviour:
   autoStartDelay: 256
   quitCheckPeriod: 32
   quitCheckTimer: 0
+  SetinitPopDefault: 0
+  SetInitDiffusionPeriod: 8
+  SetInitConcentration: 1
   QuitOnGlobalExtinction: 0
   QuitAtTime: 0
   quitTime: 4096
@@ -5681,6 +5683,10 @@ MonoBehaviour:
   quitGeneration: 64
   LogTimePeriod: 512
   startButton: {fileID: 345027977}
+  autotrophPrefabScript: {fileID: -748643579211721301, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}
+  gametePrefabScript: {fileID: 3425457196543319433, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
+  initPopField: {fileID: 978343262}
+  initConcField: {fileID: 1273409922}
 --- !u!1 &1691054297
 GameObject:
   m_ObjectHideFlags: 0

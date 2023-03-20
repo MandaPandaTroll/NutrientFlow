@@ -11,7 +11,12 @@ public class GlobalSettings : MonoBehaviour
     public static bool startButtonPressed{get;set;}
    public int autoStartTimer, autoStartDelay;
    public int quitCheckPeriod, quitCheckTimer;
-
+   public int SetInitPopDefault;
+    public static int initPopDefault{get;set;}
+    public int SetInitDiffusionPeriod;
+    public static int initDiffusionPeriod{get;set;}
+    public float SetInitConcentration;
+    public static float initConc_master{get;set;}
    public bool QuitOnGlobalExtinction;
    public bool QuitAtTime;
    public int quitTime;
@@ -20,7 +25,18 @@ public class GlobalSettings : MonoBehaviour
    public int LogTimePeriod;
    int logTimeTimer;
    public Button startButton;
-    void Start(){
+
+   public Autotroph_main autotrophPrefabScript;
+   public GameteMain gametePrefabScript;
+   public InputFieldToInt initPopField;
+   public InputFieldToFloat initConcField;
+    void Awake(){
+        initPopDefault = SetInitPopDefault;
+        initDiffusionPeriod = SetInitDiffusionPeriod;
+        initConc_master = SetInitConcentration;
+        initConcField.defaultValue = initConc_master;
+        initPopField.defaultValue = initPopDefault;
+
         AccessibleGlobalSettings.meanMaximumLifeSpan = meanMaximumLifeSpan;
         AccessibleGlobalSettings.std_lifeSpan = std_lifeSpan;
         ParamLookup.QuitOnGlobalExtinction = QuitOnGlobalExtinction;
@@ -28,7 +44,17 @@ public class GlobalSettings : MonoBehaviour
         ParamLookup.quitTime = quitTime;
         ParamLookup.QuitAtGeneration = QuitAtGeneration;
         ParamLookup.quitGeneration = quitGeneration;
-        
+        if(autotrophPrefabScript.AsexualReproductionEnabled){
+            ParamLookup.ModeOfReproduction = "Asexual";
+        }
+        else if(!autotrophPrefabScript.AsexualReproductionEnabled){
+            if(gametePrefabScript.incompatibilityEnabled){
+                ParamLookup.ModeOfReproduction = "Obligate outcrossing";
+            }else if(!gametePrefabScript.incompatibilityEnabled){
+                ParamLookup.ModeOfReproduction = "Mixed mating";
+            }
+            
+        }
     }
 
     void Update(){
@@ -119,6 +145,7 @@ public static class ParamLookup{
    public static int quitTime{get;set;}
    public static bool QuitAtGeneration{get;set;}
    public static int quitGeneration{get;set;}
+   public static string ModeOfReproduction{get;set;}
     
     
     

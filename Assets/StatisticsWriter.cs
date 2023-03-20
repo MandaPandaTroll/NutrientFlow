@@ -571,8 +571,11 @@ void WriteGametePositions(){
                         ZipArchiveEntry entry = archive.CreateEntryFromFile(file,Path.GetFileName(file));
                         //entry = File.Copy(file,)
                     }
+                    
                     archive.Dispose();
+                    
                     zipToOpen.Close();
+                    zipToOpen.Flush();
                     zipToOpen.Dispose();
                 
                 }
@@ -614,6 +617,7 @@ string path = StatisticsWriter.staticGetPath()+"params.txt";
             {
 
                 sw.WriteLine("Parameter"+","+"Value");
+                sw.WriteLine("Start time " +","+System.DateTime.Now+ "\n");
                 sw.WriteLine("Grid width: " +","+ParamLookup.gridDims[0]+ "\n");
                 sw.WriteLine("Grid height: " +","+ParamLookup.gridDims[1]+ "\n");
                 sw.WriteLine("Mean global nutrient concentration: " +","+ ParamLookup.initConc + "\n");
@@ -632,9 +636,10 @@ string path = StatisticsWriter.staticGetPath()+"params.txt";
                 sw.WriteLine("Quit time: "+","+ParamLookup.quitTime);
                 sw.WriteLine("Quit at generation: "+","+ParamLookup.QuitAtGeneration);
                 sw.WriteLine("Quit generation: "+","+ParamLookup.quitGeneration);
-                if(ParamLookup.initDistribution == "Circle"){
-                    sw.WriteLine("Circle radius: "+","+ParamLookup.circleRadius);
-                }
+                sw.WriteLine("Mode of reproduction: "+","+ParamLookup.ModeOfReproduction);
+
+                sw.WriteLine("Circle radius: "+","+ParamLookup.circleRadius);
+                
                 
                 sw.Close();
                 sw.Dispose();
@@ -658,12 +663,13 @@ string path = StatisticsWriter.staticGetPath()+"params.txt";
                 "Quit time: "+ParamLookup.quitTime+ "\n"+
                 "Quit at generation: "+ParamLookup.QuitAtGeneration+ "\n"+
                 "Quit generation: "+ParamLookup.quitGeneration+ "\n"+
+                "Circle radius: "+","+ParamLookup.circleRadius+ "\n"+
+                "Mode of reproduction: "+","+ParamLookup.ModeOfReproduction+ "\n"+
                 
                 "–––––––––––––––––––––––––"
                 );
-                if(ParamLookup.initDistribution == "Circle"){
-                Debug.Log("Circle radius: "+","+ParamLookup.circleRadius);
-                }
+                
+                
             }	
 
 

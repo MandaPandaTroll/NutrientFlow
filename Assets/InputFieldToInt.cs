@@ -10,10 +10,11 @@ public class InputFieldToInt : MonoBehaviour
     public static string fieldText{get;set;}
 
     public int value{get;set;}
-    public int defaultValue = 0;
+    public int defaultValue{get;set;}
     // Start is called before the first frame update
     void Start()
     {
+        
         value = defaultValue;
         inputField.text = defaultValue.ToString();
 
