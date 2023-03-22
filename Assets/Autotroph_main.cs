@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Autotroph_main : MonoBehaviour
 {
+    
 public static float margin = 2f;
 
 public bool InheritedLifeSpanToggle;
@@ -342,12 +343,19 @@ public static List<float> reproductiveEnergies = new List<float>();
             //return;
     }
 
+    int preNute, postNute;
+    float preEnergy, postEnergy;
+    string repType;
     public void ProduceGamete(){
         
-
+        repType = "gametic";
         Vector3 gametePosition = new Vector3(transform.position.x+Random.Range(-0.5f,0.5f),transform.position.y+Random.Range(-0.5f,0.5f),0f);
+        preNute = nutrientLevel;
         nutrientLevel -= gameteCost_nutrient;
+        postNute = nutrientLevel;
+        preEnergy = energyLevel;
         energyLevel -= gameteCost_energy;
+        postEnergy = energyLevel;
         GameObject tempGamete = Instantiate(Gamete,gametePosition, transform.rotation);
         gametesProduced += 1;
         GameteMain tempGameteScript = tempGamete.GetComponent<GameteMain>();
@@ -356,14 +364,29 @@ public static List<float> reproductiveEnergies = new List<float>();
         if(InheritedLifeSpan == true){
             tempGameteScript.parentLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal((double)maximumLifeSpan,1.0));
         }
+        if(ParamLookup.doSampleRepEvents){
+            IndividualStats.repEvents.Add(new string[7]{StatDisplay.tSteps.ToString(),
+            individualNumber.ToString(),
+            preNute.ToString(),
+            postNute.ToString(),
+            preEnergy.ToString(),
+            postEnergy.ToString(),
+            repType});
+        //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
+        }
         
         //return;
     }
 
     public void ProduceClone(){
+        repType = "asexual";
         asexualCoolDownTimer = asexualCoolDownPeriod;
+        preNute = nutrientLevel;
         nutrientLevel -= asexualCost_nutrient;
+        postNute = nutrientLevel;
+        preEnergy = energyLevel;
         energyLevel -= asexualCost_energy;
+        postEnergy = energyLevel;
         Vector3 thisPos = this.gameObject.transform.position;
         Vector3 clonePosition = new Vector3(thisPos.x+Random.Range(-0.5f,0.5f),thisPos.y+Random.Range(-0.5f,0.5f),0f);
         
@@ -382,6 +405,18 @@ public static List<float> reproductiveEnergies = new List<float>();
 
         if(InheritedLifeSpan == true){
             tempAutotrophScript.maximumLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal((double)maximumLifeSpan,1.0));
+        }
+
+
+        if(ParamLookup.doSampleRepEvents){
+            IndividualStats.repEvents.Add(new string[7]{StatDisplay.tSteps.ToString(),
+            individualNumber.ToString(),
+            preNute.ToString(),
+            postNute.ToString(),
+            preEnergy.ToString(),
+            postEnergy.ToString(),
+            repType});
+        //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
         }
 
     }
@@ -431,6 +466,7 @@ public static List<float> reproductiveEnergies = new List<float>();
 
 public static class IndividualStats{
         
+        public static List<string[]> repEvents = new List<string[]>(); //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
         public static int GetNAutos(){
             int nAuto = Autotroph_main.individuals.Count;
             

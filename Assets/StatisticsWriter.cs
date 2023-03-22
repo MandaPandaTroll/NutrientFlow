@@ -11,9 +11,10 @@ public  class StatisticsWriter : MonoBehaviour{
 
     
 
-    public int gridSampleFrequency, statSampleFrequency, autoPosSampleFreq, gamPosSampleFreq, repStatFreq, compGridDataFreq;
-   public  int sampleToCSVTimer_nutrientGrid, sampleToCSVTimer_stats, autoPosTimer, gamPosTimer, repStatTimer, compGridDataTimer;
+    public int gridSampleFrequency, statSampleFrequency, autoPosSampleFreq, gamPosSampleFreq, repStatFreq, compGridDataFreq, repEventSampleFreq;
+   public  int sampleToCSVTimer_nutrientGrid, sampleToCSVTimer_stats, autoPosTimer, gamPosTimer, repStatTimer, compGridDataTimer, repEventTimer;
 
+    public static bool doSampleRepEvents;
    public static int deaths_individual{get;set;}
    public static int deaths_gamete{get;set;}
    public static int zygotesFormed{get;set;}
@@ -25,14 +26,19 @@ public  class StatisticsWriter : MonoBehaviour{
 
 
     public static int[,] sampleGrid;
+
+
     void Start(){
+
 
         ParamLookup.gridDims = gridDims;
         
         string writePath =  getZipPath()+"ZippedGridData/";
         string readPath = getZipPath() + gridPath + "/";
         
-        
+        if(ParamLookup.doSampleRepEvents){
+            doSampleRepEvents = true;
+        }
         
         
         
@@ -124,6 +130,9 @@ void FixedUpdate(){
     gamPosTimer += 1;
     repStatTimer +=1;
     compGridDataTimer += 1;
+    if(doSampleRepEvents){
+        repEventTimer +=1;
+    }
 if (sampleToCSVTimer_nutrientGrid >= gridSampleFrequency){
             sampleToCSVTimer_nutrientGrid = 0;
             WriteNutrientGrid(sampleGrid);
@@ -156,6 +165,12 @@ if (repStatTimer >= repStatFreq){
         compGridDataTimer = 0;
         CompressGridData();
     }
+    if(doSampleRepEvents){
+        if(repEventTimer >= repEventSampleFreq){
+            repEventTimer = 0;
+            WriteRepEvents(IndividualStats.repEvents);
+        }
+    }
     
 
     
@@ -172,6 +187,7 @@ List<string[]> rowData_stats = new List<string[]>();
 List<string[]> rowData_autoPos = new List<string[]>();
 List<string[]> rowData_gametePos = new List<string[]>();
 List<string[]> rowData_repStat = new List<string[]>();
+List<string[]> rowData_repEvent = new List<string[]>();
 public  void WriteNutrientGrid(int[,] grid){
      rowData.Clear();   
      
@@ -436,6 +452,83 @@ void WriteReproductiveData(List<Autotroph_main> inds){
         outStream.Dispose();
 
 }
+
+//time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
+//int repEventIt;
+void WriteRepEvents(List<string[]> repevents){
+    //repEventIt += 1;
+    rowData_repEvent.Clear();
+    int N = repevents.Count;
+   
+            
+            
+            string[] rowDataTemp;
+            
+           
+            
+            //if(repit == 1){
+                rowDataTemp = new string[7];
+                rowDataTemp[0] = "time_steps";
+                rowDataTemp[1] = "individualNumber";
+                rowDataTemp[2] = "preNute";
+                rowDataTemp[3] = "postNute";
+                rowDataTemp[4] = "preEnergy";
+                rowDataTemp[5] = "postEnergy";
+                rowDataTemp[6] = "repType";
+
+                rowData_repEvent.Add(rowDataTemp);
+                
+            //}
+            //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
+                for(int i = 0; i < N; i++){
+                rowDataTemp = new string[7];
+                rowDataTemp[0] = repevents[i][0];
+                rowDataTemp[1] = repevents[i][1];
+                rowDataTemp[2] = repevents[i][2];
+                rowDataTemp[3] = repevents[i][3];
+                rowDataTemp[4] = repevents[i][4];
+                rowDataTemp[5] = repevents[i][5];
+                rowDataTemp[6] = repevents[i][6];
+
+                rowData_repEvent.Add(rowDataTemp);
+                
+                
+             }
+             
+            
+            //rowData_repStat.Add(rowDataTemp);
+             
+            
+            
+            
+            
+            
+
+        string[][] output = new string[rowData_repEvent.Count][];
+
+        for(int i = 0; i < output.Length; i++){
+            output[i] = rowData_repEvent[i];
+        }
+
+        int     length         = output.GetLength(0);
+        string     delimiter     = ",";
+
+        StringBuilder sb = new StringBuilder();
+        
+        for (int index = 0; index < length; index++)
+            sb.AppendLine(string.Join(delimiter, output[index]));
+        
+        
+        string filePath = getPath(repPath,"repEvents",0);
+        
+        StreamWriter outStream = System.IO.File.CreateText(filePath);
+        outStream.WriteLine(sb);
+        outStream.Flush();
+        outStream.Close();
+        outStream.Dispose();
+
+}
+
 
 int gametePosHeader = 0;
 

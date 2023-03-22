@@ -60,9 +60,9 @@ public class DiscreteGrid : MonoBehaviour
         StatisticsWriter.gridDims[1] = gridHeight;
         boxSize = new Vector2(boxTransform.localScale.x, boxTransform.localScale.y);
         if(boxSize.x >= boxSize.y){
-            maxCircleRadius = boxSize.y;
+            maxCircleRadius = boxSize.y/2f;
         }else{
-            maxCircleRadius = boxSize.x;
+            maxCircleRadius = boxSize.x/2f;
         }
         boxDims.mapBounds = boxSize/2f;
         nutesSpawned = false;
@@ -73,9 +73,10 @@ public class DiscreteGrid : MonoBehaviour
     void Start()
     {
 
-        
-        fDiffusionRate = diffRateSlider.value;
-        diffusionRate = Mathf.FloorToInt(fDiffusionRate);
+        diffRateSlider.value = (float)GlobalSettings.initDiffusionPeriod;
+        diffusionRate = GlobalSettings.initDiffusionPeriod;
+        //fDiffusionRate = diffRateSlider.value;
+        //diffusionRate = Mathf.FloorToInt(fDiffusionRate);
         if(diffusionRate <= 0){
             diffusionRate = 1;
         }

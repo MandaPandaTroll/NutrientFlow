@@ -150,7 +150,7 @@ MonoBehaviour:
   chemotaxisEnabled: 0
   perceptionRadius: 0
   incompatibilityEnabled: 0
-  interactionRadius: 2
+  interactionRadius: 1
   actionFrequency: 8
   actionTimer: 0
   nutrientLevel: 0

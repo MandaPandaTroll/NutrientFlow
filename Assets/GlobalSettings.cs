@@ -24,6 +24,8 @@ public class GlobalSettings : MonoBehaviour
    public int quitGeneration;
    public int LogTimePeriod;
    int logTimeTimer;
+
+   public bool doSampleRepEvents;
    public Button startButton;
 
    public Autotroph_main autotrophPrefabScript;
@@ -36,7 +38,9 @@ public class GlobalSettings : MonoBehaviour
         initConc_master = SetInitConcentration;
         initConcField.defaultValue = initConc_master;
         initPopField.defaultValue = initPopDefault;
-
+        if(doSampleRepEvents){
+            ParamLookup.doSampleRepEvents = true;
+        }
         AccessibleGlobalSettings.meanMaximumLifeSpan = meanMaximumLifeSpan;
         AccessibleGlobalSettings.std_lifeSpan = std_lifeSpan;
         ParamLookup.QuitOnGlobalExtinction = QuitOnGlobalExtinction;
@@ -146,6 +150,7 @@ public static class ParamLookup{
    public static bool QuitAtGeneration{get;set;}
    public static int quitGeneration{get;set;}
    public static string ModeOfReproduction{get;set;}
+   public static bool doSampleRepEvents{get;set;}
     
     
     

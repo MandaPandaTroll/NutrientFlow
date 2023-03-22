@@ -335,7 +335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InheritedLifeSpanToggle: 0
-  AsexualReproductionEnabled: 1
+  AsexualReproductionEnabled: 0
   parentGametes: 
   individualNumber: 0
   generation: 0

@@ -1900,7 +1900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoRemoveNutrients: 0
-  EquilibriumQuit: 1
+  EquilibriumQuit: 0
   displayDiffusionRate: 0
   initDiffusionEnabled: 1
   boxTransform: {fileID: 1613774633}
@@ -1911,15 +1911,15 @@ MonoBehaviour:
   nutrientSampleRate: 1
   removePeriod: 64
   removeTimer: 0
-  spawnInMiddle: 1
+  spawnInMiddle: 0
   veryRandomSpawn: 0
   defaultSpawn: 0
-  uniformSpawn: 0
+  uniformSpawn: 1
   circleSpawn: 0
-  spawnCircleRadius: 0.5
+  spawnCircleRadius: 1
   nutesToSpawn: 0
   diffusionEnabled: 0
-  diffusionLimit: 1
+  diffusionLimit: 0
   numCells: 0
   maxPerVeryRandomSpawnDivisor: 64
   statisticsWriter: {fileID: 638938759}
@@ -1939,18 +1939,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea4dca4bf6ebd4c9a8c4fef296ddda9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSampleFrequency: 512
+  gridSampleFrequency: 256
   statSampleFrequency: 512
   autoPosSampleFreq: 4096
   gamPosSampleFreq: 4096
   repStatFreq: 2048
   compGridDataFreq: 4096
+  repEventSampleFreq: 8192
   sampleToCSVTimer_nutrientGrid: 0
   sampleToCSVTimer_stats: 0
   autoPosTimer: 0
   gamPosTimer: 0
   repStatTimer: 0
   compGridDataTimer: 0
+  repEventTimer: 0
   CompressionEnabled: 0
 --- !u!1 &672433217
 GameObject:
@@ -5673,15 +5675,16 @@ MonoBehaviour:
   autoStartDelay: 256
   quitCheckPeriod: 32
   quitCheckTimer: 0
-  SetinitPopDefault: 0
-  SetInitDiffusionPeriod: 8
-  SetInitConcentration: 1
-  QuitOnGlobalExtinction: 0
+  SetInitPopDefault: 32
+  SetInitDiffusionPeriod: 128
+  SetInitConcentration: 2
+  QuitOnGlobalExtinction: 1
   QuitAtTime: 0
   quitTime: 4096
   QuitAtGeneration: 0
   quitGeneration: 64
   LogTimePeriod: 512
+  doSampleRepEvents: 1
   startButton: {fileID: 345027977}
   autotrophPrefabScript: {fileID: -748643579211721301, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}
   gametePrefabScript: {fileID: 3425457196543319433, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
