@@ -1902,19 +1902,19 @@ MonoBehaviour:
   autoRemoveNutrients: 0
   EquilibriumQuit: 0
   displayDiffusionRate: 0
-  initDiffusionEnabled: 1
+  initDiffusionEnabled: 0
   boxTransform: {fileID: 1613774633}
   gridWidth: 0
   gridHeight: 0
-  cellSize: 1
+  cellSize: 4
   initialConcentration: 0
   nutrientSampleRate: 1
   removePeriod: 64
   removeTimer: 0
   spawnInMiddle: 0
   veryRandomSpawn: 0
-  defaultSpawn: 0
-  uniformSpawn: 1
+  defaultSpawn: 1
+  uniformSpawn: 0
   circleSpawn: 0
   spawnCircleRadius: 1
   nutesToSpawn: 0
@@ -1927,6 +1927,7 @@ MonoBehaviour:
   autoRespawnNutrientsEnabled: 0
   initconcField: {fileID: 1273409922}
   nutesLeft: 0
+  replenishNutrients: 0
 --- !u!114 &638938759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1939,13 +1940,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea4dca4bf6ebd4c9a8c4fef296ddda9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSampleFrequency: 256
-  statSampleFrequency: 512
+  gridSampleFrequency: 2048
+  statSampleFrequency: 2048
   autoPosSampleFreq: 4096
   gamPosSampleFreq: 4096
-  repStatFreq: 2048
+  repStatFreq: 4096
   compGridDataFreq: 4096
   repEventSampleFreq: 8192
+  deathEventSampleFreq: 8192
   sampleToCSVTimer_nutrientGrid: 0
   sampleToCSVTimer_stats: 0
   autoPosTimer: 0
@@ -1953,6 +1955,7 @@ MonoBehaviour:
   repStatTimer: 0
   compGridDataTimer: 0
   repEventTimer: 0
+  deathEventTimer: 0
   CompressionEnabled: 0
 --- !u!1 &672433217
 GameObject:
@@ -4116,7 +4119,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &1220317153
 GameObject:
   m_ObjectHideFlags: 0
@@ -5440,7 +5443,7 @@ Transform:
   m_GameObject: {fileID: 1613774631}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1024, y: 1024, z: 1}
+  m_LocalScale: {x: 128, y: 128, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 733099880}
@@ -5668,16 +5671,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61a382b959db4606afa781b0e95d351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meanMaximumLifeSpan: 2048
-  std_lifeSpan: 128
+  meanMaximumLifeSpan: 256
+  std_lifeSpan: 32
   autoStart: 1
   autoStartTimer: 0
   autoStartDelay: 256
   quitCheckPeriod: 32
   quitCheckTimer: 0
-  SetInitPopDefault: 32
-  SetInitDiffusionPeriod: 128
-  SetInitConcentration: 2
+  SetInitPopDefault: 8
+  SetInitDiffusionPeriod: 32
+  SetInitConcentration: 32
   QuitOnGlobalExtinction: 1
   QuitAtTime: 0
   quitTime: 4096
@@ -6726,6 +6729,7 @@ MonoBehaviour:
   initSensitivity: 1
   img: {fileID: 2091001313}
   rendTex: {fileID: 8600000, guid: 0147a34f6fc504dec86231e33acd8c6d, type: 2}
+  textureEnabled: 0
   textureRefreshRate: 1
 --- !u!114 &2091001313
 MonoBehaviour:

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5091997081896318692
+--- !u!1 &9168400772237308875
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5091997081896318695}
-  - component: {fileID: 5091997081896318694}
+  - component: {fileID: 9168400772237308872}
+  - component: {fileID: 9168400772237308873}
   m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
@@ -17,29 +17,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5091997081896318695
+--- !u!4 &9168400772237308872
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997081896318692}
+  m_GameObject: {fileID: 9168400772237308875}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.445, z: 0}
   m_LocalScale: {x: 0.2, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5091997082272881857}
+  m_Father: {fileID: 9168400772888336878}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5091997081896318694
+--- !u!212 &9168400772237308873
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997081896318692}
-  m_Enabled: 0
+  m_GameObject: {fileID: 9168400772237308875}
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &5091997082272881867
+--- !u!1 &9168400772888336868
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,44 +92,44 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5091997082272881857}
-  - component: {fileID: 5091997082272881870}
-  - component: {fileID: 5091997082272881871}
-  - component: {fileID: 5091997082272881868}
-  - component: {fileID: 5091997082272881869}
-  - component: {fileID: 5091997082272881866}
-  - component: {fileID: -748643579211721301}
+  - component: {fileID: 9168400772888336878}
+  - component: {fileID: 9168400772888336865}
+  - component: {fileID: 9168400772888336864}
+  - component: {fileID: 9168400772888336867}
+  - component: {fileID: 9168400772888336866}
+  - component: {fileID: 9168400772888336869}
+  - component: {fileID: 5479353604482207876}
   m_Layer: 0
-  m_Name: Autotroph_kin
+  m_Name: Individual
   m_TagString: Autotroph
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5091997082272881857
+--- !u!4 &9168400772888336878
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
+  m_GameObject: {fileID: 9168400772888336868}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.1019135, y: -0.24916184, z: 0}
+  m_LocalPosition: {x: -273.10507, y: 134.14159, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5091997081896318695}
+  - {fileID: 9168400772237308872}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5091997082272881870
+--- !u!212 &9168400772888336865
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
-  m_Enabled: 0
+  m_GameObject: {fileID: 9168400772888336868}
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -163,7 +163,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -174,13 +174,13 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &5091997082272881871
+--- !u!58 &9168400772888336864
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
+  m_GameObject: {fileID: 9168400772888336868}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -190,14 +190,14 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!50 &5091997082272881868
+--- !u!50 &9168400772888336867
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
+  m_GameObject: {fileID: 9168400772888336868}
   m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -211,14 +211,14 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!96 &5091997082272881869
+--- !u!96 &9168400772888336866
 TrailRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
+  m_GameObject: {fileID: 9168400772888336868}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -310,36 +310,32 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!114 &5091997082272881866
+--- !u!114 &9168400772888336869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
+  m_GameObject: {fileID: 9168400772888336868}
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 19a56c2b42f25408e94ba70d214fe658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-748643579211721301
+--- !u!114 &5479353604482207876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5091997082272881867}
+  m_GameObject: {fileID: 9168400772888336868}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb1d08e6da20d4839bc8d8d00545978a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalMigrations_left: 0
-  totalMigrations_right: 0
-  totalMigrations_up: 0
-  totalMigrations_down: 0
   coordNute: 000000000000000000000000
-  OnlyMiddle: 1
+  OnlyMiddle: 0
   InheritedLifeSpanToggle: 0
   AsexualReproductionEnabled: 0
   parentGametes: 
@@ -347,11 +343,11 @@ MonoBehaviour:
   generation: 0
   baseCost_energy: 0
   growthCost_energy: 1
-  gameteCost_energy: 16
+  gameteCost_energy: 24
   energySynthase_UpkeepCost_energy: 1
-  maxMovementCost: 4
-  movementCost: 4
-  maxTurningCost: 0
+  maxMovementCost: 0.5
+  movementCost: 0.5
+  maxTurningCost: 0.5
   turningCost: 0.5
   perNutrientAbsorptionCost: 0.1
   baseCost_nutrient: 0
@@ -363,8 +359,8 @@ MonoBehaviour:
   masterFrequency: 1
   catabolicFrequency: 128
   actionFrequency: 1
-  anabolicFrequency: 8
-  photosyntheticFrequency: 6
+  anabolicFrequency: 1
+  photosyntheticFrequency: 1
   energyLevel: 0
   energySynthase_Integrity: 1
   currentMaturity: 0
@@ -379,17 +375,17 @@ MonoBehaviour:
   maxTurnAngle: 90
   turnProbability: 0.01
   energySynthase_restoreAmount: 0.01
-  baseEnergyProduction: 6
-  maxNutrients: 128
+  baseEnergyProduction: 4
+  maxNutrients: 1024
   maximumLifeSpan: 0
-  absorptionRate: 16
-  minimumMaturityAge: 64
+  absorptionRate: 6
+  minimumMaturityAge: 512
   maxGametes: 0
   maxGametesEnabled: 0
   turnDice: 0
   gametesProduced: 0
   clonesProduced: 0
   Gamete: {fileID: 2752296361011086610, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
-  m_Autotroph: {fileID: 5091997082272881867}
+  m_Autotroph: {fileID: 9168400772888336868}
   mapBounds: {x: 0, y: 0}
   cellValue: 0

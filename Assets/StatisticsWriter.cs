@@ -11,8 +11,8 @@ public  class StatisticsWriter : MonoBehaviour{
 
     
 
-    public int gridSampleFrequency, statSampleFrequency, autoPosSampleFreq, gamPosSampleFreq, repStatFreq, compGridDataFreq, repEventSampleFreq;
-   public  int sampleToCSVTimer_nutrientGrid, sampleToCSVTimer_stats, autoPosTimer, gamPosTimer, repStatTimer, compGridDataTimer, repEventTimer;
+    public int gridSampleFrequency, statSampleFrequency, autoPosSampleFreq, gamPosSampleFreq, repStatFreq, compGridDataFreq, repEventSampleFreq, deathEventSampleFreq;
+   public  int sampleToCSVTimer_nutrientGrid, sampleToCSVTimer_stats, autoPosTimer, gamPosTimer, repStatTimer, compGridDataTimer, repEventTimer,deathEventTimer;
 
     public static bool doSampleRepEvents;
    public static int deaths_individual{get;set;}
@@ -22,6 +22,7 @@ public  class StatisticsWriter : MonoBehaviour{
    string popPath = "PopData";
    string posPath = "PositionData";
    string repPath = "RepData";
+   string lockedNutePath = "LockedNutrientGridData";
    
 
 
@@ -46,6 +47,9 @@ public  class StatisticsWriter : MonoBehaviour{
         if(Directory.Exists(getZipPath()+gridPath)){
             Directory.Delete(getZipPath()+gridPath,true);
         }
+        if(Directory.Exists(getZipPath()+lockedNutePath)){
+            Directory.Delete(getZipPath()+lockedNutePath,true);
+        }
         if(Directory.Exists(getZipPath()+popPath)){
             Directory.Delete(getZipPath()+popPath,true);
         }
@@ -64,6 +68,7 @@ public  class StatisticsWriter : MonoBehaviour{
 
 
         Directory.CreateDirectory(getZipPath()+gridPath);
+        Directory.CreateDirectory(getZipPath()+lockedNutePath);
         Directory.CreateDirectory(getZipPath()+popPath);
         Directory.CreateDirectory(getZipPath()+posPath);
         Directory.CreateDirectory(getZipPath()+repPath);
@@ -90,20 +95,20 @@ public  class StatisticsWriter : MonoBehaviour{
         
         
 
-        if (gridSampleFrequency < 2){
+        if (gridSampleFrequency < 1){
             gridSampleFrequency = 2;
         }
-        if (statSampleFrequency < 31){
-            statSampleFrequency = 31;
+        if (statSampleFrequency < 1){
+            statSampleFrequency = 1;
         }
-        if(autoPosSampleFreq < 31){
-            autoPosSampleFreq = 31;
+        if(autoPosSampleFreq < 1){
+            autoPosSampleFreq = 1;
         }
-        if(gamPosSampleFreq < 31){
-            gamPosSampleFreq = 31;
+        if(gamPosSampleFreq < 1){
+            gamPosSampleFreq = 1;
         }
-        if(repStatFreq < 31){
-            repStatFreq = 31;
+        if(repStatFreq < 1){
+            repStatFreq = 1;
         }
         sampleToCSVTimer_nutrientGrid = gridSampleFrequency -2;
         sampleToCSVTimer_stats = statSampleFrequency -2;
@@ -120,7 +125,8 @@ public  class StatisticsWriter : MonoBehaviour{
         ParamLookup.autoPosSamplePeriod = autoPosSampleFreq;
         ParamLookup.gamPosSamplePeriod = gamPosSampleFreq;
         ParamLookup.repStatSamplePeriod = repStatFreq;
-        
+        ParamLookup.repEventSamplePeriod = repEventSampleFreq;
+        ParamLookup.deathEventSamplePeriod = deathEventSampleFreq;
     }
 void FixedUpdate(){
 
@@ -133,6 +139,7 @@ void FixedUpdate(){
     if(doSampleRepEvents){
         repEventTimer +=1;
     }
+    deathEventTimer +=1;
 if (sampleToCSVTimer_nutrientGrid >= gridSampleFrequency){
             sampleToCSVTimer_nutrientGrid = 0;
             WriteNutrientGrid(sampleGrid);
@@ -171,6 +178,10 @@ if (repStatTimer >= repStatFreq){
             WriteRepEvents(IndividualStats.repEvents);
         }
     }
+    if(deathEventTimer >= deathEventSampleFreq){
+        deathEventTimer = 0;
+        WriteDeathEvents(IndividualStats.deathEvents);
+    }
     
 
     
@@ -179,7 +190,7 @@ public bool CompressionEnabled;
 public static int[] gridDims = new int[2];
 
 
-int fileNumber_nutrient, zipNumber_nutrient;
+int fileNumber_nutrient, zipNumber_nutrient, fileNumber_lockedNutrient;
 
 
 List<string[]> rowData = new List<string[]>();
@@ -188,6 +199,7 @@ List<string[]> rowData_autoPos = new List<string[]>();
 List<string[]> rowData_gametePos = new List<string[]>();
 List<string[]> rowData_repStat = new List<string[]>();
 List<string[]> rowData_repEvent = new List<string[]>();
+List<string[]> rowData_deathEvent = new List<string[]>();
 public  void WriteNutrientGrid(int[,] grid){
      rowData.Clear();   
      
@@ -229,6 +241,53 @@ public  void WriteNutrientGrid(int[,] grid){
         outStream.Flush();
         outStream.Close();
         outStream.Dispose();
+        if(IndividualStats.GetNAutos() > 0 && GameteStats.GetNGamete() > 0){
+            WriteLockedGridData(DiscreteGrid.lockedNutrientCoords);
+        }
+        
+    }
+
+    public void WriteLockedGridData(int[,] grid){
+     rowData.Clear();   
+     
+            
+            string[] rowDataTemp;
+             
+            
+            for(int y = 0; y < gridDims[1]; y++){
+                rowDataTemp = new string[gridDims[0]];
+                for(int x = 0; x < gridDims[0]; x++){
+                rowDataTemp[x] = grid[x,y].ToString();
+                }
+                rowData.Add(rowDataTemp);
+            }
+            
+            
+            
+
+        string[][] output = new string[rowData.Count][];
+
+        for(int i = 0; i < output.Length; i++){
+            output[i] = rowData[i];
+        }
+
+        int     length         = output.GetLength(0);
+        string     delimiter     = ",";
+
+        StringBuilder sb = new StringBuilder();
+        
+        for (int index = 0; index < length; index++)
+            sb.AppendLine(string.Join(delimiter, output[index]));
+        
+        
+        string filePath = getPath(lockedNutePath,"gridData_locked",fileNumber_lockedNutrient);
+        string compPath = filePath;
+        fileNumber_lockedNutrient += 1;
+        StreamWriter outStream = System.IO.File.CreateText(filePath);
+        outStream.WriteLine(sb);
+        outStream.Flush();
+        outStream.Close();
+        outStream.Dispose();
         
     }
 
@@ -261,7 +320,7 @@ public  void WriteNutrientGrid(int[,] grid){
 
             }else{
                 rowDataTemp[0] = Mathf.FloorToInt(StatDisplay.tSecs).ToString();
-                rowDataTemp[1] = StatDisplay.tSteps.ToString();
+                rowDataTemp[1] = GlobalTimeControls.globalSteps.ToString();
                 rowDataTemp[2] = IndividualStats.GetNAutos().ToString();
                 rowDataTemp[3] = GameteStats.GetNGamete().ToString();
                 rowDataTemp[4] = nutrientStats.freeNutrients.ToString();
@@ -335,10 +394,10 @@ int autoPosHeader = 0;
              for(int i = 0; i < N; i++){
                 rowDataTemp = new string[7];
                 rowDataTemp[0] = Mathf.FloorToInt(StatDisplay.tSecs).ToString();
-                rowDataTemp[1] = StatDisplay.tSteps.ToString();
+                rowDataTemp[1] = GlobalTimeControls.globalSteps.ToString();
                 rowDataTemp[2] = Autotroph_main.individuals[i].individualNumber.ToString();
-                rowDataTemp[3] = GetScaledPosition(Autotroph_main.individuals[i].transform.position).x.ToString();
-                rowDataTemp[4] = GetScaledPosition(Autotroph_main.individuals[i].transform.position).y.ToString();
+                rowDataTemp[3] = Autotroph_main.individuals[i].coordNute[0].ToString();
+                rowDataTemp[4] = Autotroph_main.individuals[i].coordNute[1].ToString();
                 rowDataTemp[5] = Autotroph_main.individuals[i].nutrientLevel.ToString();
                 rowDataTemp[6] = Autotroph_main.individuals[i].spentNutrients.ToString();
                 rowData_autoPos.Add(rowDataTemp);
@@ -382,7 +441,7 @@ void WriteReproductiveData(List<Autotroph_main> inds){
     
    
             string secs = Mathf.FloorToInt(StatDisplay.tSecs).ToString();
-            string steps = StatDisplay.tSteps.ToString();
+            string steps = GlobalTimeControls.globalSteps.ToString();
             string[] rowDataTemp;
             
            
@@ -530,6 +589,98 @@ void WriteRepEvents(List<string[]> repevents){
 }
 
 
+void WriteDeathEvents(List<string[]> deathevents){
+    //repEventIt += 1;
+    rowData_deathEvent.Clear();
+    int N = deathevents.Count;
+   
+            
+            
+            string[] rowDataTemp;
+            
+           
+            
+            
+                rowDataTemp = new string[15];
+                rowDataTemp[0] = "time_steps";
+                rowDataTemp[1] = "individualNumber";
+                rowDataTemp[2] = "causeOfDeath";
+                rowDataTemp[3] = "age";
+                rowDataTemp[4] = "generation";
+                rowDataTemp[5] = "nutrientLevel";
+                rowDataTemp[6] = "spentNutrients";
+                rowDataTemp[7] = "energyLevel";
+                rowDataTemp[8] = "reproductiveEvents";
+                rowDataTemp[9] = "migrations_left";
+                rowDataTemp[10] = "migrations_right";
+                rowDataTemp[11] = "migrations_up";
+                rowDataTemp[12] = "migrations_down";
+                rowDataTemp[13] = "pos_x";
+                rowDataTemp[14] = "pos_y";
+
+
+                rowData_deathEvent.Add(rowDataTemp);
+                
+            
+            
+                for(int i = 0; i < N; i++){
+                rowDataTemp = new string[15];
+                rowDataTemp[0] = deathevents[i][0];
+                rowDataTemp[1] = deathevents[i][1];
+                rowDataTemp[2] = deathevents[i][2];
+                rowDataTemp[3] = deathevents[i][3];
+                rowDataTemp[4] = deathevents[i][4];
+                rowDataTemp[5] = deathevents[i][5];
+                rowDataTemp[6] = deathevents[i][6];
+                rowDataTemp[7] = deathevents[i][7];
+                rowDataTemp[8] = deathevents[i][8];
+                rowDataTemp[9] = deathevents[i][9];
+                rowDataTemp[10] = deathevents[i][10];
+                rowDataTemp[11] = deathevents[i][11];
+                rowDataTemp[12] = deathevents[i][12];
+                rowDataTemp[13] = deathevents[i][13];
+                rowDataTemp[14] = deathevents[i][14];
+
+                rowData_deathEvent.Add(rowDataTemp);
+                
+                
+             }
+             
+            
+            //rowData_repStat.Add(rowDataTemp);
+             
+            
+            
+            
+            
+            
+
+        string[][] output = new string[rowData_deathEvent.Count][];
+
+        for(int i = 0; i < output.Length; i++){
+            output[i] = rowData_deathEvent[i];
+        }
+
+        int     length         = output.GetLength(0);
+        string     delimiter     = ",";
+
+        StringBuilder sb = new StringBuilder();
+        
+        for (int index = 0; index < length; index++)
+            sb.AppendLine(string.Join(delimiter, output[index]));
+        
+        
+        string filePath = getPath(popPath,"deathEvents",0);
+        
+        StreamWriter outStream = System.IO.File.CreateText(filePath);
+        outStream.WriteLine(sb);
+        outStream.Flush();
+        outStream.Close();
+        outStream.Dispose();
+
+}
+
+
 int gametePosHeader = 0;
 
 void WriteGametePositions(){
@@ -553,11 +704,11 @@ void WriteGametePositions(){
              for(int i = 0; i < N; i++){
                 rowDataTemp = new string[5];
                 rowDataTemp[0] = Mathf.FloorToInt(StatDisplay.tSecs).ToString();
-                rowDataTemp[1] = StatDisplay.tSteps.ToString();
+                rowDataTemp[1] = GlobalTimeControls.globalSteps.ToString();
                 if(GameteMain.gameteScripts[i] != null){
                     rowDataTemp[2] = GameteMain.gameteScripts[i].gameteNumber.ToString();
-                    rowDataTemp[3] = GetScaledPosition(GameteMain.gameteScripts[i].transform.position).x.ToString();
-                    rowDataTemp[4] = GetScaledPosition(GameteMain.gameteScripts[i].transform.position).y.ToString();
+                    rowDataTemp[3] = GameteMain.gameteScripts[i].coordNute[0].ToString();
+                    rowDataTemp[4] = GameteMain.gameteScripts[i].coordNute[1].ToString();
                     rowData_gametePos.Add(rowDataTemp);
                 }/*else{
                     rowDataTemp[2] = "0";

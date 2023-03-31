@@ -36,4 +36,8 @@ public class GlobalTimeControls : MonoBehaviour
              SceneManager.LoadScene("SampleScene");
         }
     }
+    public static int globalSteps{get;set;}
+    void FixedUpdate(){
+        globalSteps +=1;
+    }
 }

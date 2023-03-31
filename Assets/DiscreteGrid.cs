@@ -6,6 +6,10 @@ using System.Linq;
 using UnityEngine.UI;
 public class DiscreteGrid : MonoBehaviour
 {
+
+public static int[,] lockedNutrientCoords{get;set;}
+    
+    public static Vector2[,] cellCenters;
     float maxCircleRadius;
     public bool autoRemoveNutrients;
 
@@ -54,8 +58,12 @@ public class DiscreteGrid : MonoBehaviour
    public InputFieldToFloat initconcField;
   
    void Awake(){
+        lockedNutrientCoords = new int[gridWidth,gridHeight]; 
         gridWidth = Mathf.FloorToInt(boxTransform.localScale.x/cellSize);
-        gridHeight = Mathf.FloorToInt(boxTransform.localScale.y/cellSize);
+        gridHeight = Mathf.FloorToInt(boxTransform.localScale.y / cellSize);
+        tempLockedCoords = new int[gridWidth,gridHeight];
+        lockedNutrientCoords = tempLockedCoords;
+        cellCenters = new Vector2[gridWidth,gridHeight];
         StatisticsWriter.gridDims[0] = gridWidth;
         StatisticsWriter.gridDims[1] = gridHeight;
         boxSize = new Vector2(boxTransform.localScale.x, boxTransform.localScale.y);
@@ -66,18 +74,26 @@ public class DiscreteGrid : MonoBehaviour
         }
         boxDims.mapBounds = boxSize/2f;
         nutesSpawned = false;
-        
+        for(int i = 0; i < gridWidth; i++){
+            for(int j = 0; j < gridHeight; j++){
+                cellCenters[i,j] = new Vector2(-boxSize.x/2f + (float)i*cellSize + cellSize/2f,-boxSize.y/2f + (float)j*cellSize+cellSize/2f);
+                
+                //Debug.Log(cellCenters[i,j]);
+            }
+        }
         
    }
    
     void Start()
     {
-
+        
         diffRateSlider.value = (float)GlobalSettings.initDiffusionPeriod;
         diffusionRate = GlobalSettings.initDiffusionPeriod;
+        
+        
         //fDiffusionRate = diffRateSlider.value;
         //diffusionRate = Mathf.FloorToInt(fDiffusionRate);
-        if(diffusionRate <= 0){
+        if (diffusionRate <= 0){
             diffusionRate = 1;
         }
         displayDiffusionRate = diffusionRate;
@@ -88,6 +104,9 @@ public class DiscreteGrid : MonoBehaviour
         
 
         nutrientGrid = new IntGrid(gridWidth,gridHeight,cellSize,originPosition);
+        Autotroph_main.cellSize = cellSize;
+        Autotroph_main.originPosition = originPosition;
+        GameteMain.originPosition = originPosition;
         
         numCells = gridWidth*gridHeight;
         
@@ -105,6 +124,7 @@ public class DiscreteGrid : MonoBehaviour
             initialConcentration = initconcField.value;
             if(!nutesSpawned){
                 nutesToSpawn = Mathf.FloorToInt(initialConcentration*numCells);
+                sampleTimer = nutrientSampleRate;
                 SpawnNutrients(nutesToSpawn);
             }
             
@@ -793,7 +813,7 @@ void DefaultDiffusion(){
         return;
 }
 int lastNutes, lastFree, lastLocked;
-
+public bool replenishNutrients;
     
     void SampleNutrients(){
             
@@ -813,8 +833,21 @@ int lastNutes, lastFree, lastLocked;
             nutrientStats.totalNutrients = tempTotal;
             nutrientStats.freeNutrients = tempFree;
             nutrientStats.lockedNutrients = tempLocked;
+            System.Array.Clear(tempLockedCoords,0,tempLockedCoords.Length);
 
-            
+            if(replenishNutrients){
+                if(tempTotal < nutesToSpawn){
+                    for(int i = tempTotal; i < nutesToSpawn; i++){
+                        int rx = Random.Range(0,gridWidth);
+                        int ry = Random.Range(0,gridHeight);
+                        nutrientGrid.SetValue(rx,ry,nutrientGrid.GetValue(rx,ry)+1);
+                    }
+                }
+                
+               
+            }
+
+            GetLockedNutrientCoords();
             
             sampleTimer = 0;
     }
@@ -865,7 +898,54 @@ int GetFancyDiffusion(int input){
 
     return Random.Range(0,maxout+1);
 }
+    
+    
+      
 
+    
+    int[] xyn_i = new int[3]{0,0,0};
+    int[] xyn_g = new int[3]{0,0,0};
+    int[,] tempLockedCoords;
+    private void GetLockedNutrientCoords(){
+        
+        //int[] xyn = new int[3];
+       List<Autotroph_main> inds = Autotroph_main.individuals;
+       List<GameteMain> gams = GameteMain.gameteScripts;
+        
+        foreach(Autotroph_main ind in inds){
+            
+            xyn_i = ind.coordNute;
+
+           // if(xyn[0] >= 0 && xyn[0] < gridWidth && xyn[1] >= 0 && xyn[1] < gridHeight ){
+                tempLockedCoords[xyn_i[0],xyn_i[1]] = xyn_i[2];
+                if(xyn_i[0] < 0 || xyn_i[0] >= gridWidth){
+                Debug.Log("ind x " + tempLockedCoords.GetLength(0) + " , " + xyn_i);
+            }
+            if(xyn_i[1] < 0 || xyn_i[1] >= gridHeight){
+                Debug.Log("ind y " + tempLockedCoords.GetLength(1) + " , " + xyn_i);
+            }
+            //}
+            
+        }
+        foreach(GameteMain gam in gams){
+
+            xyn_g = gam.coordNute;
+            //if(xyn[0] >= 0 && xyn[0] < gridWidth && xyn[1] >= 0 && xyn[1] < gridHeight ){
+            tempLockedCoords[xyn_g[0],xyn_g[1]] = xyn_g[2];
+            if(xyn_g[0] < 0 || xyn_g[0] >= gridWidth){
+                Debug.Log("gam x " + tempLockedCoords.GetLength(0) + " , " + xyn_g);
+            }
+            if(xyn_g[1] < 0 || xyn_g[1] >= gridHeight){
+                Debug.Log("gam y " + tempLockedCoords.GetLength(1) + " , " + xyn_g);
+            }
+            //Debug.Log("tmpL = ("+tempLockedCoords.GetLength(0)+","+tempLockedCoords.GetLength(1)+") xyn_g = " + xyn_g[0]+","+xyn_g[1]+","+xyn_g[2]);
+            //}
+            
+        }
+        lockedNutrientCoords = tempLockedCoords;
+    
+        
+    }
 
 }
 

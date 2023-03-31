@@ -41,13 +41,18 @@ public class AutotrophSpawner : MonoBehaviour
     }
     Autotroph_main thisAutotroph_script;
     public void SpawnAutotrophs(){
+        int L0 = DiscreteGrid.cellCenters.GetLength(0);
+        int L1 = DiscreteGrid.cellCenters.GetLength(1);
+        int I0, I1;
         spawnAutos = false;
         realisedSpawnRange = new Vector2(boxWidth*initialSpawnRange, boxHeight*initialSpawnRange);
         ParamLookup.initPop = initialPopulationSize;
         for(int i = 0; i < initialPopulationSize;i++){
-            Quaternion tempRotation = Quaternion.Euler(0,0,Random.Range(-180f,180f));
+            I0 = Random.Range(1,L0-1);//(L0/2)-1;//
+            I1 = Random.Range(1,L1-1);//(L1/2)-1;//
+            Quaternion tempRotation = Quaternion.identity;//Quaternion.Euler(0,0,Random.Range(-180f,180f));
 
-            Vector3 tempSpawnPosition = new Vector3(Random.Range(-realisedSpawnRange.x,realisedSpawnRange.x),Random.Range(-realisedSpawnRange.y,realisedSpawnRange.y), 0);
+            Vector3 tempSpawnPosition = DiscreteGrid.cellCenters[I0,I1];//new Vector3(Random.Range(-realisedSpawnRange.x,realisedSpawnRange.x),Random.Range(-realisedSpawnRange.y,realisedSpawnRange.y), 0);
             thisAutotroph = Instantiate(autotroph_prefab,tempSpawnPosition, tempRotation);
             thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
             thisAutotroph_script.nutrientLevel = initialNutrientLevel;

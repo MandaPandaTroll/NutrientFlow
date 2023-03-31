@@ -9,13 +9,17 @@ public class IntGrid{
     private int width;
     private int height;
     private float cellSize;
+    
     private Vector3 originPosition;
+    
 
     public IntGrid(int width, int height, float cellSize, Vector3 originPosition){
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
+        
         this.originPosition = originPosition;
+        
         gridArray = new int[width,height];
 
         for (int x = 0; x < gridArray.GetLength(0); x++)
@@ -37,8 +41,18 @@ public class IntGrid{
     private void GetXY(Vector3 worldPosition, out int x, out int y){
 
         x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
+        if(x >= width-1){
+            x = width-1;
+        }else if(x <= 0){
+            x = 0;
+        }
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
-    
+        if(y >= height-1){
+            y = height-1;
+        }else if(y <= 0){
+            y = 0;
+        }
+
     }
 
     public void SetValue(int x, int y, int value){
@@ -127,5 +141,11 @@ public class IntGrid{
         int freeNutes = gridArray.Cast<int>().Sum();
         return freeNutes;
     }
-    
+
+   
+public Vector2 GetCellCenter(int x, int y){
+    return GetWorldPosition(x,y);
+}
+   
+
 }

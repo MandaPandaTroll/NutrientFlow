@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class GameteMain : MonoBehaviour
 {
-
+    public int[] coordNute = new int[3];
+    public static float cellSize{get;set;}
     public int parentLifeSpan;
     public float maxTurnAngle;
     public int zygoteLifeSpan;
     public float movementSpeed;
     public  Vector2 mapBounds;
+    public static Vector3 originPosition{get;set;}
  
     public double meanMaximumLifeSpan;
     public double std_lifeSpan;
@@ -60,7 +62,8 @@ public class GameteMain : MonoBehaviour
             gameteScripts.Add(this);
         }
         
-            
+        
+        interactingGameteIDs = new int[2];
         
         actionTimer = Random.Range(0,actionFrequency+1);
         isActing = false;
@@ -69,10 +72,27 @@ public class GameteMain : MonoBehaviour
         thisCollider = this.gameObject.GetComponent<Collider2D>();
         gameteCount += 1;
         gameteNumber = gameteCount;
+        interactingGameteIDs[0] = gameteNumber;
         maximumLifeSpan = Mathf.FloorToInt (ExtraMath.GetNormal(meanMaximumLifeSpan, std_lifeSpan));
     }
+    Vector2 tempVector = new Vector2(0,0);
     void Start()
     {
+        coordNute = new int[3]{0,0,0};//GameteStats.GetCoordNute(this);
+        /*rb.MovePosition(new Vector2(Mathf.Round(rb.position.x),Mathf.Round(rb.position.y)));
+        tempVector = rb.position;
+        if(rb.position.x > mapBounds.x){
+            tempVector.x = mapBounds.x;
+        }else if(rb.position.x < -mapBounds.x){
+            tempVector.x = -mapBounds.x;
+        }
+        if(rb.position.y > mapBounds.y){
+            tempVector.y = mapBounds.y;
+        }else if(rb.position.y < -mapBounds.y){
+            tempVector.y = -mapBounds.y;
+        }*/
+        //rb.MovePosition(tempVector);
+        interactionRadius = cellSize;
         interactingGameteIDs = new int[2];
          nutrientgrid = GameObject.Find("NutrientGrid").GetComponent<DiscreteGrid>().nutrientGrid;
         
@@ -80,20 +100,51 @@ public class GameteMain : MonoBehaviour
         staticNutrientLevel = Autotroph_main.staticGameteCost;
         nutrientLevel = staticNutrientLevel;
         interactingGameteIDs[0] = gameteNumber;
-        rb.MoveRotation(Random.Range(-180f,180f));
+        //rb.MoveRotation(Random.Range(-180f,180f));
+        rb.MoveRotation(0);
         mapBounds =boxDims.mapBounds;
+
+        if(rb.position.x >= mapBounds.x){
+            
+            rb.MovePosition(new Vector2(mapBounds.x,rb.position.y));
+        }else if(rb.position.x <= -mapBounds.x){
+            
+            rb.MovePosition(new Vector2(-mapBounds.x,rb.position.y));
+        }
+        if(rb.position.y >= mapBounds.y){
+            
+            rb.MovePosition(new Vector2(rb.position.x,mapBounds.y));
+        }else if(rb.position.x <= -mapBounds.y){
+            
+            rb.MovePosition(new Vector2(-rb.position.x,mapBounds.y));
+        }
     }
     
     // Update is called once per frame
     int sumNutrients;
     int cellValue;
 
-
+    Vector2 pos = new Vector2(0,0);
     public int[] interactingGameteIDs;
     List <GameteMain> gameteScriptList = new List<GameteMain>();
     void FixedUpdate()
     {
         
+        if(rb.position.x >= mapBounds.x){
+            pos = new Vector2(mapBounds.x-(cellSize/2f),rb.position.y);
+            rb.MovePosition(pos);
+        }else if(rb.position.x <= -mapBounds.x){
+            pos = new Vector2(-mapBounds.x+(cellSize/2f),rb.position.y);
+            rb.MovePosition(pos);
+        }
+        if(rb.position.y >= mapBounds.y){
+            pos = new Vector2(rb.position.x,mapBounds.y-(cellSize/2f));
+            rb.MovePosition(pos);
+        }else if(rb.position.y <= -mapBounds.y){
+            pos = new Vector2(-rb.position.x,-mapBounds.y+(cellSize/2f));
+            rb.MovePosition(pos);
+        }
+        coordNute = GameteStats.GetCoordNute(this);
         numSteps += 1;
         actionTimer += 1;
         if(numSteps >= maximumLifeSpan && isActing == false ){
@@ -287,7 +338,7 @@ public class GameteMain : MonoBehaviour
                             nutrientLevel = 0;
                             otherGamete_script.nutrientLevel = 0;
                             
-                            GameObject thisAutotroph = Instantiate (autotroph_prefab, zygotePosition, transform.rotation);
+                            GameObject thisAutotroph = Instantiate (autotroph_prefab, new Vector3(transform.position.x,transform.position.y,transform.position.z), this.transform.rotation);
                             StatisticsWriter.zygotesFormed += 1;
                             Autotroph_main thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
                             thisAutotroph_script.generation = (generation+otherGamete_script.generation)/2;
@@ -342,5 +393,19 @@ public static class GameteStats{
         }*/
         return output;
     }
+
+    public static int[] GetCoordNute( GameteMain gam){
+            
+            int[] output = new int[3];
+            output[0] = Mathf.FloorToInt((gam.transform.position - Autotroph_main.originPosition).x / Autotroph_main.cellSize);
+            output[1] = Mathf.FloorToInt((gam.transform.position - Autotroph_main.originPosition).y / Autotroph_main.cellSize);
+            output[2] = gam.nutrientLevel;
+            if(output[0] < 0  || output[1] < 0 || output[0] > ParamLookup.gridDims[0]-1 || output[1] > ParamLookup.gridDims[1]-1){
+                output[0] = 0;
+                output[1] = 0;
+                output[2] = 0;
+            }
+            return output;
+        }
 
 }

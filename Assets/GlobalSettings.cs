@@ -32,7 +32,9 @@ public class GlobalSettings : MonoBehaviour
    public GameteMain gametePrefabScript;
    public InputFieldToInt initPopField;
    public InputFieldToFloat initConcField;
+   
     void Awake(){
+        ParamLookup.isServer = GetIsServer();
         initPopDefault = SetInitPopDefault;
         initDiffusionPeriod = SetInitDiffusionPeriod;
         initConc_master = SetInitConcentration;
@@ -89,7 +91,7 @@ public class GlobalSettings : MonoBehaviour
                 }
             }
             if(QuitAtTime){
-            if (StatDisplay.tSteps >= quitTime){
+            if (GlobalTimeControls.globalSteps >= quitTime){
                 Debug.Log("MAX TIME REACHED");
                 Application.Quit();
             }
@@ -109,7 +111,7 @@ public class GlobalSettings : MonoBehaviour
     }
 
     void WriteTimeLog(){
-        Debug.Log(System.DateTime.Now + " | " + " seconds: " + StatDisplay.tSecs +  " | " + " Steps: " + StatDisplay.tSteps  +"\n" +
+        Debug.Log(System.DateTime.Now + " | " + " seconds: " + StatDisplay.tSecs +  " | " + " Steps: " + GlobalTimeControls.globalSteps  +"\n" +
          "Autotrophs: " + IndividualStats.GetNAutos() +"\n" +
          "Gametes: " + GameteStats.GetNGamete() +"\n" +
          "Mean Generation Number: " + IndividualStats.GetMeanGeneration()+"\n" +
@@ -117,9 +119,17 @@ public class GlobalSettings : MonoBehaviour
     }
 
 
-
+    bool GetIsServer(){
+        #if UNITY_SERVER
+        return true;
+        #else
+        return false;
+        #endif
+    }
     
 }
+
+
 
 public static class AccessibleGlobalSettings{
     public static double meanMaximumLifeSpan{get;set;}
@@ -144,6 +154,8 @@ public static class ParamLookup{
     public static int autoPosSamplePeriod{get;set;}
     public static int gamPosSamplePeriod{get;set;}
     public static int repStatSamplePeriod{get;set;}
+    public static int repEventSamplePeriod{get;set;}
+    public static int deathEventSamplePeriod{get;set;}
     public static bool QuitOnGlobalExtinction{get;set;}
    public static bool QuitAtTime{get;set;}
    public static int quitTime{get;set;}
@@ -151,6 +163,7 @@ public static class ParamLookup{
    public static int quitGeneration{get;set;}
    public static string ModeOfReproduction{get;set;}
    public static bool doSampleRepEvents{get;set;}
+   public static bool isServer{get;set;}
     
     
     

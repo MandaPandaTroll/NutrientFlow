@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Autotroph_main : MonoBehaviour
 {
-    
+
+
+
+public int totalMigrations_left, totalMigrations_right, totalMigrations_up, totalMigrations_down;
+
+public int[] coordNute = new int[3]{0,0,0};
+
+    public bool OnlyMiddle;
 public static float margin = 2f;
 
 public bool InheritedLifeSpanToggle;
@@ -12,7 +19,8 @@ public bool AsexualReproductionEnabled;
 public static bool InheritedLifeSpan{get;set;}
 public static List<int> reproductiveNutes = new List<int>();
 public static List<float> reproductiveEnergies = new List<float>();
-
+public static Vector3 originPosition { get; set; }
+    public static float cellSize { get; set; }
     public int[] parentGametes;
    
 
@@ -65,6 +73,11 @@ public static List<float> reproductiveEnergies = new List<float>();
     
     // Start is called before the first frame update
     void Awake(){
+        totalMigrations_left = 0;
+        totalMigrations_right = 0;
+        totalMigrations_up = 0;
+        totalMigrations_down = 0;
+        safetyVector = new Vector2(0,0);
         gametesProduced = 0;
         clonesProduced = 0;
 
@@ -96,8 +109,11 @@ public static List<float> reproductiveEnergies = new List<float>();
             anabolicFrequency = 1;
         }
     }
+    bool hasRecordedDeath;
     void Start()
-    {  
+    {
+        hasRecordedDeath = false;
+        coordNute = new int[3]{0,0,0};
         if(AsexualReproductionEnabled == false){
             energyLevel = energy_init;
         }else{
@@ -108,7 +124,7 @@ public static List<float> reproductiveEnergies = new List<float>();
             staticGameteCost = gameteCost_nutrient;
         }
         mapBounds = GameObject.Find("box").transform.localScale/2f;
-        
+        boxDims.mapBounds = mapBounds;
         turnDice = Mathf.FloorToInt(1f/turnProbability);
          m_Rigidbody2D = GetComponent<Rigidbody2D>();
          
@@ -121,7 +137,7 @@ public static List<float> reproductiveEnergies = new List<float>();
         movementCost = maxMovementCost*currentMaturity;
         turningCost = maxTurningCost*currentMaturity;
         GameteMain.zygoteNutrients = gameteCost_nutrient*2;
-        Vector2 newSize = new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
+        Vector2 newSize = new Vector2(cellSize,cellSize);//new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
                 transform.localScale = newSize;
                 minimumMaturityAge = maximumLifeSpan/8;
                 
@@ -132,10 +148,31 @@ public static List<float> reproductiveEnergies = new List<float>();
     public int cellValue;
     int asexualCoolDownPeriod = 32;
     int asexualCoolDownTimer = 0;
-  
+    Vector2 safetyVector;
     void FixedUpdate()
     {
-        
+        if(transform.position.x >= mapBounds.x){
+            
+            m_Rigidbody2D.MovePosition(new Vector2(mapBounds.x-1f,transform.position.y));
+        }else if(transform.position.x <= -mapBounds.x){
+            
+            m_Rigidbody2D.MovePosition(new Vector2(-mapBounds.x+1f,transform.position.y));
+        }
+        if(transform.position.y >= mapBounds.y){
+            
+            m_Rigidbody2D.MovePosition(new Vector2(transform.position.x,mapBounds.y-1f));
+        }else if(transform.position.y <= -mapBounds.y){
+           
+            m_Rigidbody2D.MovePosition(new Vector2(transform.position.x,-mapBounds.y+1f));
+        }
+        coordNute = IndividualStats.GetCoordNute(this);
+
+        /*if (OnlyMiddle)
+        {
+            Vector2 discretePosition = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
+            m_Rigidbody2D.MovePosition(discretePosition);
+        }*/
+        /*
         if(m_Rigidbody2D.position.x <= -mapBounds.x+0.5){
                     Vector2 newPos = m_Rigidbody2D.position;
                     newPos = new Vector2(-mapBounds.x+margin,m_Rigidbody2D.position.y);
@@ -160,7 +197,7 @@ public static List<float> reproductiveEnergies = new List<float>();
                     m_Rigidbody2D.MoveRotation(Random.Range(-180f,180f));
                     m_Rigidbody2D.MovePosition(newPos);
                 }
-        
+        */
         masterTimer += 1;
         if( masterTimer >= masterFrequency){
             masterTimer = 0;
@@ -169,9 +206,42 @@ public static List<float> reproductiveEnergies = new List<float>();
         
         if(age >= maximumLifeSpan || energyLevel <= 1 ){
             
-            
+            string causeOfDeath = "";
+            string reproductiveEvents = (gametesProduced + clonesProduced).ToString();
             cellValue = nutrientGrid.GetValue(m_Rigidbody2D.position);
             nutrientGrid.SetValue(m_Rigidbody2D.position,cellValue+nutrientLevel + spentNutrients);
+            if(age >= maximumLifeSpan){
+                causeOfDeath = "age";
+                if(energyLevel <= 1){
+                    causeOfDeath = "age_starvation";
+                }
+            }else if(energyLevel <= 1){
+                causeOfDeath = "starvation";
+            }
+
+            if(!hasRecordedDeath){
+                IndividualStats.deathEvents.Add(new string[15]{
+                GlobalTimeControls.globalSteps.ToString(),
+                individualNumber.ToString(),
+                causeOfDeath,
+                age.ToString(),
+                generation.ToString(),
+                nutrientLevel.ToString(),
+                spentNutrients.ToString(),
+                energyLevel.ToString(),
+                reproductiveEvents,
+                totalMigrations_left.ToString(),
+                totalMigrations_right.ToString(),
+                totalMigrations_up.ToString(),
+                totalMigrations_down.ToString(),
+                coordNute[0].ToString(),
+                coordNute[1].ToString()
+
+                });
+                hasRecordedDeath = true;
+            }
+            
+            
             nutrientLevel = 0;
             spentNutrients = 0;
             Destroy(gameObject,0.5f);
@@ -238,7 +308,7 @@ public static List<float> reproductiveEnergies = new List<float>();
             
         
             if(energyLevel >= movementCost*64f && energyLevel >= turningCost*64f){
-                Move();
+                MoveDiscrete();
             }
             
         }
@@ -291,7 +361,7 @@ public static List<float> reproductiveEnergies = new List<float>();
                 nutrientLevel -= growthCost_nutrient;
                 energyLevel -= growthCost_energy;
                 spentNutrients += growthCost_nutrient;
-                Vector2 newSize = new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
+                Vector2 newSize = new Vector2(cellSize,cellSize);//new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
                 transform.localScale = newSize;
                 movementSpeed = Mathf.Clamp(maxMovementSpeed/2f+ (maxMovementSpeed/2f)*currentMaturity,0f,maxMovementSpeed);
                 movementCost = maxMovementCost*currentMaturity;
@@ -349,14 +419,14 @@ public static List<float> reproductiveEnergies = new List<float>();
     public void ProduceGamete(){
         
         repType = "gametic";
-        Vector3 gametePosition = new Vector3(transform.position.x+Random.Range(-0.5f,0.5f),transform.position.y+Random.Range(-0.5f,0.5f),0f);
+        Vector3 gametePosition = new Vector3(transform.position.x,transform.position.y,transform.position.z);
         preNute = nutrientLevel;
         nutrientLevel -= gameteCost_nutrient;
         postNute = nutrientLevel;
         preEnergy = energyLevel;
         energyLevel -= gameteCost_energy;
         postEnergy = energyLevel;
-        GameObject tempGamete = Instantiate(Gamete,gametePosition, transform.rotation);
+        GameObject tempGamete = Instantiate(Gamete,new Vector3(transform.position.x,transform.position.y,0f), Quaternion.identity);
         gametesProduced += 1;
         GameteMain tempGameteScript = tempGamete.GetComponent<GameteMain>();
         tempGameteScript.generation = generation + 1;
@@ -420,6 +490,64 @@ public static List<float> reproductiveEnergies = new List<float>();
         }
 
     }
+    Vector2 moveVector = new Vector2(0,0);
+    Vector2 newVector = new Vector2(0,0);
+    float moveMag;
+    public void MoveDiscrete(){
+        
+        moveMag = cellSize;
+        if(energyLevel > movementCost){
+        double xRoll = ExtraMath.GetNormal(0,0.25);
+        double yRoll = ExtraMath.GetNormal(0,0.25);
+        //Debug.Log(xRoll+","+yRoll);
+        moveVector.x = 0;
+        moveVector.y = 0;
+        newVector.x = 0;
+        newVector.y = 0;
+        if(xRoll < -1.0 ){
+            moveVector.x = -cellSize;
+            energyLevel-=movementCost;
+            totalMigrations_left +=1;
+        }else if(xRoll > 1.0){
+            moveVector.x = cellSize;
+            energyLevel-=movementCost;
+            totalMigrations_right +=1;
+        }
+
+        if(yRoll < -1.0 ){
+            moveVector.y = -cellSize;
+            energyLevel-=movementCost;
+            totalMigrations_down +=1;
+        }else if(yRoll > 1.0){
+            moveVector.y = cellSize;
+            energyLevel-=movementCost;
+            totalMigrations_up +=1;
+        }
+        
+            newVector.x = Mathf.Round(transform.position.x + moveVector.x);
+            if(newVector.x >= mapBounds.x-(cellSize/2f)){
+                newVector.x = mapBounds.x-(cellSize/2f);
+                }else if(newVector.x <= -mapBounds.x+(cellSize/2f)){
+                    newVector.x = -mapBounds.x+(cellSize/2f);
+                }
+            newVector.y = Mathf.Round(transform.position.y + moveVector.y);
+            if(newVector.y >= mapBounds.y-(cellSize/2f)){
+                newVector.y = mapBounds.y-(cellSize/2f);
+                }else if(newVector.y <= -mapBounds.y+(cellSize/2f)){
+                    newVector.y = -mapBounds.y+(cellSize/2f);
+                }
+            
+
+             m_Rigidbody2D.MovePosition(newVector);
+        
+       
+        
+        }
+        
+
+
+    }
+
 
     public void Move(){
         
@@ -460,6 +588,12 @@ public static List<float> reproductiveEnergies = new List<float>();
 
     public static int staticGameteCost{get;set;}
 
+    void GetGridPosition(Vector3 worldPosition, out int x, out int y)
+    {
+        x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
+        y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+    }
+
 }
 
 
@@ -467,6 +601,7 @@ public static List<float> reproductiveEnergies = new List<float>();
 public static class IndividualStats{
         
         public static List<string[]> repEvents = new List<string[]>(); //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
+        public static List<string[]> deathEvents = new List<string[]>();
         public static int GetNAutos(){
             int nAuto = Autotroph_main.individuals.Count;
             
@@ -552,5 +687,19 @@ public static class IndividualStats{
             return generationVals;
         }
 
-        
+
+        public static int[] GetCoordNute( Autotroph_main ind){
+            
+            int[] output = new int[3]{0,0,0};
+            
+            output[0] = Mathf.FloorToInt((ind.transform.position - Autotroph_main.originPosition).x / Autotroph_main.cellSize);
+            output[1] = Mathf.FloorToInt((ind.transform.position - Autotroph_main.originPosition).y / Autotroph_main.cellSize);
+            output[2] = ind.nutrientLevel + ind.spentNutrients;
+            if(!(output[0] >= 0 && output[0] < ParamLookup.gridDims[0] && output[1] >= 0 && output[1] < ParamLookup.gridDims[1])){
+                output[0] = 0;
+                output[1] = 0;
+                output[2] = 0;
+            }
+            return output;
+        }
     }
