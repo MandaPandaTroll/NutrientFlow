@@ -72,7 +72,9 @@ public static int[,] lockedNutrientCoords{get;set;}
         }else{
             maxCircleRadius = boxSize.x/2f;
         }
-        boxDims.mapBounds = boxSize/2f;
+        
+        boxDims.mapBounds = new Vector2(((boxSize.x/2f)-cellSize/2f),((boxSize.y/2f)-cellSize/2f));
+        
         nutesSpawned = false;
         for(int i = 0; i < gridWidth; i++){
             for(int j = 0; j < gridHeight; j++){
@@ -915,9 +917,13 @@ int GetFancyDiffusion(int input){
         foreach(Autotroph_main ind in inds){
             
             xyn_i = ind.coordNute;
+            xyn_i[2] += ind.spentNutrients;
 
            // if(xyn[0] >= 0 && xyn[0] < gridWidth && xyn[1] >= 0 && xyn[1] < gridHeight ){
-                tempLockedCoords[xyn_i[0],xyn_i[1]] = xyn_i[2];
+            if(xyn_i[0] != -1 && xyn_i[1] != -1){
+                    tempLockedCoords[xyn_i[0],xyn_i[1]] = xyn_i[2];
+                }
+                
                 if(xyn_i[0] < 0 || xyn_i[0] >= gridWidth){
                 Debug.Log("ind x " + tempLockedCoords.GetLength(0) + " , " + xyn_i);
             }
@@ -930,8 +936,12 @@ int GetFancyDiffusion(int input){
         foreach(GameteMain gam in gams){
 
             xyn_g = gam.coordNute;
+            
             //if(xyn[0] >= 0 && xyn[0] < gridWidth && xyn[1] >= 0 && xyn[1] < gridHeight ){
-            tempLockedCoords[xyn_g[0],xyn_g[1]] = xyn_g[2];
+                if(xyn_g[0] != -1 && xyn_g[1] != -1){
+                    tempLockedCoords[xyn_g[0],xyn_g[1]] = xyn_g[2];
+                }
+            
             if(xyn_g[0] < 0 || xyn_g[0] >= gridWidth){
                 Debug.Log("gam x " + tempLockedCoords.GetLength(0) + " , " + xyn_g);
             }

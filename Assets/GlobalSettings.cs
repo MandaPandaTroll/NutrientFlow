@@ -7,6 +7,7 @@ public class GlobalSettings : MonoBehaviour
 {
     public double meanMaximumLifeSpan;
     public double std_lifeSpan;
+    public int maturityNominator;
     public bool autoStart;
     public static bool startButtonPressed{get;set;}
    public int autoStartTimer, autoStartDelay;
@@ -23,6 +24,8 @@ public class GlobalSettings : MonoBehaviour
    public bool QuitAtGeneration;
    public int quitGeneration;
    public int LogTimePeriod;
+   //public float migrationSD;
+   public float pMigration;
    int logTimeTimer;
 
    public bool doSampleRepEvents;
@@ -32,9 +35,15 @@ public class GlobalSettings : MonoBehaviour
    public GameteMain gametePrefabScript;
    public InputFieldToInt initPopField;
    public InputFieldToFloat initConcField;
+   public bool geometricDiagonalCost;
+   public bool simultRepMig;
    
     void Awake(){
         ParamLookup.isServer = GetIsServer();
+        if(maturityNominator <= 0){
+            maturityNominator = 1;
+        }
+        Autotroph_main.maturityNominator = maturityNominator;
         initPopDefault = SetInitPopDefault;
         initDiffusionPeriod = SetInitDiffusionPeriod;
         initConc_master = SetInitConcentration;
@@ -42,6 +51,7 @@ public class GlobalSettings : MonoBehaviour
         initPopField.defaultValue = initPopDefault;
         if(doSampleRepEvents){
             ParamLookup.doSampleRepEvents = true;
+            StatisticsWriter.doSampleRepEvents = true;
         }
         AccessibleGlobalSettings.meanMaximumLifeSpan = meanMaximumLifeSpan;
         AccessibleGlobalSettings.std_lifeSpan = std_lifeSpan;
@@ -50,6 +60,10 @@ public class GlobalSettings : MonoBehaviour
         ParamLookup.quitTime = quitTime;
         ParamLookup.QuitAtGeneration = QuitAtGeneration;
         ParamLookup.quitGeneration = quitGeneration;
+        //ParamLookup.migrationSD = migrationSD;
+        ParamLookup.pMigration = pMigration;
+        ParamLookup.geometricDiagonalCost = geometricDiagonalCost;
+        ParamLookup.simultRepMig = simultRepMig;
         if(autotrophPrefabScript.AsexualReproductionEnabled){
             ParamLookup.ModeOfReproduction = "Asexual";
         }
@@ -164,6 +178,10 @@ public static class ParamLookup{
    public static string ModeOfReproduction{get;set;}
    public static bool doSampleRepEvents{get;set;}
    public static bool isServer{get;set;}
+   //public static float migrationSD{get;set;}
+   public static float pMigration{get;set;}
+   public static bool geometricDiagonalCost{get;set;}
+   public static bool simultRepMig{get;set;}
     
     
     

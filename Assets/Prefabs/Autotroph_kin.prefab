@@ -334,10 +334,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb1d08e6da20d4839bc8d8d00545978a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalSpentNutrients: 0
   totalMigrations_left: 0
   totalMigrations_right: 0
   totalMigrations_up: 0
   totalMigrations_down: 0
+  totalMigrations_upRight: 0
+  totalMigrations_downRight: 0
+  totalMigrations_upLeft: 0
+  totalMigrations_downLeft: 0
   coordNute: 000000000000000000000000
   OnlyMiddle: 1
   InheritedLifeSpanToggle: 0
@@ -347,49 +352,51 @@ MonoBehaviour:
   generation: 0
   baseCost_energy: 0
   growthCost_energy: 1
-  gameteCost_energy: 16
-  energySynthase_UpkeepCost_energy: 1
-  maxMovementCost: 4
-  movementCost: 4
+  gameteCost_energy: 8
+  energySynthase_UpkeepCost_energy: 4
+  maxMovementCost: 16
+  movementCost: 16
   maxTurningCost: 0
   turningCost: 0.5
-  perNutrientAbsorptionCost: 0.1
+  perNutrientAbsorptionCost: 0.2
   baseCost_nutrient: 0
   growthCost_nutrient: 1
   gameteCost_nutrient: 1
-  energySynthase_UpkeepCost_nutrient: 2
+  energySynthase_UpkeepCost_nutrient: 1
   asexualCost_nutrient: 8
   asexualCost_energy: 128
-  masterFrequency: 1
-  catabolicFrequency: 128
+  masterFrequency: 2
+  catabolicFrequency: 2
   actionFrequency: 1
-  anabolicFrequency: 8
-  photosyntheticFrequency: 6
-  energyLevel: 0
+  anabolicFrequency: 1
+  photosyntheticFrequency: 1
+  energyLevel: 32
   energySynthase_Integrity: 1
   currentMaturity: 0
   movementSpeed: 0.01
   nutrientLevel: 0
   spentNutrients: 0
   age: 0
-  energy_init: 256
-  growthRate: 0.25
+  energy_init: 32
+  growthRate: 0.1
   maxMovementSpeed: 0.015
-  energySynthase_DecayAmount: 0.005
+  energySynthase_DecayAmount: 0.05
   maxTurnAngle: 90
   turnProbability: 0.01
-  energySynthase_restoreAmount: 0.01
-  baseEnergyProduction: 6
-  maxNutrients: 128
+  energySynthase_restoreAmount: 0.05
+  baseEnergyProduction: 3
+  maxNutrients: 16
   maximumLifeSpan: 0
-  absorptionRate: 16
-  minimumMaturityAge: 64
+  absorptionRate: 1
+  minimumMaturityAge: 256
   maxGametes: 0
   maxGametesEnabled: 0
   turnDice: 0
   gametesProduced: 0
   clonesProduced: 0
+  hardMaturityAgeLimit: 1
   Gamete: {fileID: 2752296361011086610, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
   m_Autotroph: {fileID: 5091997082272881867}
   mapBounds: {x: 0, y: 0}
   cellValue: 0
+  pMigration: 0.01

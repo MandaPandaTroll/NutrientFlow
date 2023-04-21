@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AutotrophSpawner : MonoBehaviour
 {
+
+    
+    public bool singleHabitat;
     public GameObject autotroph_prefab;
     public InputFieldToInt initPopInputField;
     GameObject thisAutotroph;
@@ -41,23 +44,53 @@ public class AutotrophSpawner : MonoBehaviour
     }
     Autotroph_main thisAutotroph_script;
     public void SpawnAutotrophs(){
+        
         int L0 = DiscreteGrid.cellCenters.GetLength(0);
         int L1 = DiscreteGrid.cellCenters.GetLength(1);
+        int[] middle0 = new int[2];
+        int[] middle1  = new int[2];
+        
+        if(L0 % 2 == 0){
+            middle0[0] = (L0/2) - 1;
+            middle0[1] = (L0/2);
+        }else if(L0 %2 != 0){
+            middle0[0] = (L0/2);
+            middle0[1] = (L0/2);
+        }
+        if(L1 % 2 == 0){
+            middle1[0] = (L1/2) - 1;
+            middle1[1] = (L1/2);
+        }else if(L1 %2 != 0){
+            middle1[0] = (L1/2);
+            middle1[1] = (L1/2);
+        }
+
+        
+        int[] spawnRange2 = new int[2]{Mathf.RoundToInt((float)L0*initialSpawnRange/2f),Mathf.RoundToInt((float)L1*initialSpawnRange/2f)};
         int I0, I1;
         spawnAutos = false;
         realisedSpawnRange = new Vector2(boxWidth*initialSpawnRange, boxHeight*initialSpawnRange);
         ParamLookup.initPop = initialPopulationSize;
+        
+        I0 = middle0[0];
+        I1 = middle1[0];
+
         for(int i = 0; i < initialPopulationSize;i++){
-            I0 = Random.Range(1,L0-1);//(L0/2)-1;//
-            I1 = Random.Range(1,L1-1);//(L1/2)-1;//
+            //I0 = Random.Range(1,L0-1);
+            if(!singleHabitat){
+                I0 = Random.Range(middle0[0]-spawnRange2[0]+1,middle0[1]+spawnRange2[0]);
+            //I1 = Random.Range(1,L1-1);
+            I1 = Random.Range(middle1[0]-spawnRange2[1]+1,middle1[1]+spawnRange2[1]);
+            }
+            
             Quaternion tempRotation = Quaternion.identity;//Quaternion.Euler(0,0,Random.Range(-180f,180f));
 
             Vector3 tempSpawnPosition = DiscreteGrid.cellCenters[I0,I1];//new Vector3(Random.Range(-realisedSpawnRange.x,realisedSpawnRange.x),Random.Range(-realisedSpawnRange.y,realisedSpawnRange.y), 0);
             thisAutotroph = Instantiate(autotroph_prefab,tempSpawnPosition, tempRotation);
             thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
             thisAutotroph_script.nutrientLevel = initialNutrientLevel;
-            thisAutotroph_script.currentMaturity = 1f;//Random.Range(0,1f);
-            thisAutotroph_script.age = 0;//thisAutotroph_script.maximumLifeSpan/2;//Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);
+            thisAutotroph_script.currentMaturity = Random.Range(0,0.25f);//0;
+            thisAutotroph_script.age = Random.Range(0,thisAutotroph_script.maximumLifeSpan/4);//0;//thisAutotroph_script.maximumLifeSpan/2;;
             thisAutotroph_script.parentGametes = new int[2]{-1,-1};
         }
         spawnAutos = false;

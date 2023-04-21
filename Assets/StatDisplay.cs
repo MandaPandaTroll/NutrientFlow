@@ -7,7 +7,8 @@ public class StatDisplay : MonoBehaviour
 {
 
    
-
+    public static List<int> causeOfDeathRunningList = new List<int>();
+    public float ageToStarvationRatio;
     public  static int tSteps;
     public bool doReset{get;set;}
     float meanGen;
@@ -62,6 +63,10 @@ public class StatDisplay : MonoBehaviour
             meanGenText.text = "Mean" + "\n" + "generation" +  "\n" +IndividualStats.GetMeanGeneration().ToString();
             generationStDevText.text = "SD" + "\n" + "generation" +  "\n" +ExtraMath.GetGenerationStDev(IndividualStats.GetGenerationVals()).ToString();
             diffusionRateText.text = "Diffusion"+ "\n" + "Period(step)" + "\n" + DiscreteGrid.diffusionRate.ToString();
+            /*if(causeOfDeathRunningList.Count > 100){
+                ageToStarvationRatio = causeOfDeathRunningList.
+               causeOfDeathRunningList.RemoveRange(0,causeOfDeathRunningList.Count-100);
+            }*/
             statUpdateTimer = 0;
         }
     }

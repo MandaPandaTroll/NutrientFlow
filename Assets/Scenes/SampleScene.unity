@@ -1568,6 +1568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 753bb8abc4b3748b3b5d7048a6790898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ageToStarvationRatio: 0
   statUpdatePeriod: 1
   tSecText: {fileID: 730602595}
   tStepText: {fileID: 596777485}
@@ -1906,22 +1907,22 @@ MonoBehaviour:
   boxTransform: {fileID: 1613774633}
   gridWidth: 0
   gridHeight: 0
-  cellSize: 4
+  cellSize: 2
   initialConcentration: 0
-  nutrientSampleRate: 1
+  nutrientSampleRate: 0.5
   removePeriod: 64
   removeTimer: 0
   spawnInMiddle: 0
   veryRandomSpawn: 0
-  defaultSpawn: 1
+  defaultSpawn: 0
   uniformSpawn: 0
-  circleSpawn: 0
-  spawnCircleRadius: 1
+  circleSpawn: 1
+  spawnCircleRadius: 0.1
   nutesToSpawn: 0
   diffusionEnabled: 0
   diffusionLimit: 0
   numCells: 0
-  maxPerVeryRandomSpawnDivisor: 64
+  maxPerVeryRandomSpawnDivisor: 8
   statisticsWriter: {fileID: 638938759}
   diffRateSlider: {fileID: 1088746216}
   autoRespawnNutrientsEnabled: 0
@@ -1940,11 +1941,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea4dca4bf6ebd4c9a8c4fef296ddda9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSampleFrequency: 2048
-  statSampleFrequency: 2048
-  autoPosSampleFreq: 4096
-  gamPosSampleFreq: 4096
-  repStatFreq: 4096
+  gridSampleFrequency: 512
+  statSampleFrequency: 7
+  autoPosSampleFreq: 100000
+  gamPosSampleFreq: 100000
+  repStatFreq: 8192
   compGridDataFreq: 4096
   repEventSampleFreq: 8192
   deathEventSampleFreq: 8192
@@ -5443,7 +5444,7 @@ Transform:
   m_GameObject: {fileID: 1613774631}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 128, y: 128, z: 1}
+  m_LocalScale: {x: 32, y: 32, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 733099880}
@@ -5653,11 +5654,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63408efd30cfc47519ec3467b53f56b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singleHabitat: 0
   autotroph_prefab: {fileID: 5091997082272881867, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}
   initPopInputField: {fileID: 978343262}
   initialNutrientLevel: 0
   initialPopulationSize: 0
-  initialSpawnRange: 0.01
+  initialSpawnRange: 0.1
   box: {fileID: 1613774631}
 --- !u!114 &1683066735
 MonoBehaviour:
@@ -5672,13 +5674,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meanMaximumLifeSpan: 256
-  std_lifeSpan: 32
+  std_lifeSpan: 0
+  maturityNominator: 4
   autoStart: 1
   autoStartTimer: 0
   autoStartDelay: 256
   quitCheckPeriod: 32
   quitCheckTimer: 0
-  SetInitPopDefault: 8
+  SetInitPopDefault: 64
   SetInitDiffusionPeriod: 32
   SetInitConcentration: 32
   QuitOnGlobalExtinction: 1
@@ -5687,6 +5690,7 @@ MonoBehaviour:
   QuitAtGeneration: 0
   quitGeneration: 64
   LogTimePeriod: 512
+  migrationSD: 0.5
   doSampleRepEvents: 1
   startButton: {fileID: 345027977}
   autotrophPrefabScript: {fileID: -748643579211721301, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}
