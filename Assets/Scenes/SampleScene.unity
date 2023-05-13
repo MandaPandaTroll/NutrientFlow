@@ -1915,8 +1915,8 @@ MonoBehaviour:
   spawnInMiddle: 0
   veryRandomSpawn: 0
   defaultSpawn: 0
-  uniformSpawn: 0
-  circleSpawn: 1
+  uniformSpawn: 1
+  circleSpawn: 0
   spawnCircleRadius: 0.1
   nutesToSpawn: 0
   diffusionEnabled: 0
@@ -1925,7 +1925,6 @@ MonoBehaviour:
   maxPerVeryRandomSpawnDivisor: 8
   statisticsWriter: {fileID: 638938759}
   diffRateSlider: {fileID: 1088746216}
-  autoRespawnNutrientsEnabled: 0
   initconcField: {fileID: 1273409922}
   nutesLeft: 0
   replenishNutrients: 0
@@ -1941,14 +1940,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea4dca4bf6ebd4c9a8c4fef296ddda9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSampleFrequency: 512
-  statSampleFrequency: 7
-  autoPosSampleFreq: 100000
-  gamPosSampleFreq: 100000
-  repStatFreq: 8192
+  gridSampleFrequency: 32
+  statSampleFrequency: 16
+  autoPosSampleFreq: 2048
+  gamPosSampleFreq: 2048
+  repStatFreq: 2048
   compGridDataFreq: 4096
-  repEventSampleFreq: 8192
-  deathEventSampleFreq: 8192
+  repEventSampleFreq: 2048
+  deathEventSampleFreq: 2048
   sampleToCSVTimer_nutrientGrid: 0
   sampleToCSVTimer_stats: 0
   autoPosTimer: 0
@@ -5620,6 +5619,7 @@ GameObject:
   - component: {fileID: 1683066733}
   - component: {fileID: 1683066734}
   - component: {fileID: 1683066735}
+  - component: {fileID: 1683066736}
   m_Layer: 0
   m_Name: SettingsHandler
   m_TagString: Untagged
@@ -5659,7 +5659,7 @@ MonoBehaviour:
   initPopInputField: {fileID: 978343262}
   initialNutrientLevel: 0
   initialPopulationSize: 0
-  initialSpawnRange: 0.1
+  initialSpawnRange: 0.9
   box: {fileID: 1613774631}
 --- !u!114 &1683066735
 MonoBehaviour:
@@ -5674,8 +5674,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meanMaximumLifeSpan: 256
-  std_lifeSpan: 0
-  maturityNominator: 4
+  std_lifeSpan: 32
+  maturityNominator: 10
   autoStart: 1
   autoStartTimer: 0
   autoStartDelay: 256
@@ -5684,19 +5684,38 @@ MonoBehaviour:
   SetInitPopDefault: 64
   SetInitDiffusionPeriod: 32
   SetInitConcentration: 32
+  maturityCoef: 0.8
   QuitOnGlobalExtinction: 1
-  QuitAtTime: 0
-  quitTime: 4096
+  QuitAtTime: 1
+  quitTime: 100000
   QuitAtGeneration: 0
   quitGeneration: 64
   LogTimePeriod: 512
-  migrationSD: 0.5
+  pMigration: 0.0008
   doSampleRepEvents: 1
   startButton: {fileID: 345027977}
   autotrophPrefabScript: {fileID: -748643579211721301, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}
   gametePrefabScript: {fileID: 3425457196543319433, guid: 92f529497a57e4074b52fe6dda92b491, type: 3}
   initPopField: {fileID: 978343262}
   initConcField: {fileID: 1273409922}
+  geometricDiagonalCost: 0
+  simultRepMig: 1
+  spawnCenterEvenInd: 1
+  randomStartAge: 0
+  randomStartMaturity: 0
+  juvenileMigration: 1
+--- !u!114 &1683066736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683066732}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81159277a12c62541b6f160c1f9546c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1691054297
 GameObject:
   m_ObjectHideFlags: 0

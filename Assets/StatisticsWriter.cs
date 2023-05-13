@@ -24,12 +24,15 @@ string EditorStatsDir;
    string repPath = "RepData";
    string lockedNutePath = "LockedNutrientGridData";
    string gridPopPath = "gridPopData";
+   string selfingGridPath = "selfingGridData";
 
 
     public static int[,] sampleGrid;
 
 
     void Start(){
+        firstAutoPos = false;
+        firstGamPos = false;
         if (Application.platform == RuntimePlatform.WindowsEditor)
         {
             EditorStatsDir = new string(System.Environment.GetEnvironmentVariable("USERPROFILE")+"/UnityEditorStatsOutput/");
@@ -60,6 +63,9 @@ string EditorStatsDir;
         if(Directory.Exists(getZipPath()+gridPopPath)){
             Directory.Delete(getZipPath()+gridPopPath,true);
         }
+        if(Directory.Exists(getZipPath()+selfingGridPath)){
+            Directory.Delete(getZipPath()+selfingGridPath,true);
+        }
         if(Directory.Exists(getZipPath()+lockedNutePath)){
             Directory.Delete(getZipPath()+lockedNutePath,true);
         }
@@ -83,6 +89,7 @@ string EditorStatsDir;
         Directory.CreateDirectory(getZipPath()+gridPath);
         Directory.CreateDirectory(getZipPath()+lockedNutePath);
         Directory.CreateDirectory(getZipPath()+gridPopPath);
+        Directory.CreateDirectory(getZipPath()+selfingGridPath);
         Directory.CreateDirectory(getZipPath()+popPath);
         Directory.CreateDirectory(getZipPath()+posPath);
         Directory.CreateDirectory(getZipPath()+repPath);
@@ -109,6 +116,7 @@ string EditorStatsDir;
         fileNumber_gridPop = 1000;
         fileNumber_repEvent = 1000;
         fileNumber_deathEvent = 1000;
+        fileNumber_selfingGrid = 1000;
         
         
         
@@ -128,8 +136,10 @@ string EditorStatsDir;
         if(repStatFreq < 1){
             repStatFreq = 1;
         }
-        sampleToCSVTimer_nutrientGrid = gridSampleFrequency -2;
-        sampleToCSVTimer_stats = statSampleFrequency -2;
+        sampleToCSVTimer_nutrientGrid = gridSampleFrequency -4;
+        sampleToCSVTimer_stats = statSampleFrequency -4;
+        autoPosTimer = autoPosSampleFreq -4;
+        gamPosTimer = gamPosSampleFreq -4;
         firstStat = false;
         
         rowData = new List<string[]>();
@@ -182,6 +192,7 @@ if (sampleToCSVTimer_nutrientGrid >= gridSampleFrequency){
             //if(IndividualStats.GetNAutos() > 0 || GameteStats.GetNGamete() > 0){
             WriteLockedGridData(DiscreteGrid.lockedNutrientCoords);
             WriteGridPopData(IndividualStats.GetGridPop(Autotroph_main.individuals,gridDims));
+            WriteSelfingGridData(IndividualStats.GetSelfingGrid(Autotroph_main.individuals,gridDims));
         //}
             
         }
@@ -194,12 +205,12 @@ if (sampleToCSVTimer_stats >= statSampleFrequency){
         }
 if (autoPosTimer >= autoPosSampleFreq){
             autoPosTimer = 0;
-            //WriteAutoTrophPositions();
+            WriteAutoTrophPositions();
             
         }
 if (gamPosTimer >= gamPosSampleFreq){
             gamPosTimer = 0;
-            //WriteGametePositions();
+            WriteGametePositions();
             
         }
 if (repStatTimer >= repStatFreq){
@@ -374,14 +385,62 @@ public  void WriteNutrientGrid(int[,] grid){
         
         return;
     }
+    
+    int fileNumber_selfingGrid;
+    public void WriteSelfingGridData(int[,] grid){
+     rowData.Clear();   
+     
+            
+            string[] rowDataTemp;
+             
+            
+            for(int y = 0; y < gridDims[1]; y++){
+                rowDataTemp = new string[gridDims[0]];
+                for(int x = 0; x < gridDims[0]; x++){
+                rowDataTemp[x] = grid[x,y].ToString();
+                }
+                rowData.Add(rowDataTemp);
+            }
+            
+            
+            
+
+        string[][] output = new string[rowData.Count][];
+
+        for(int i = 0; i < output.Length; i++){
+            output[i] = rowData[i];
+        }
+
+        int     length         = output.GetLength(0);
+        string     delimiter     = ",";
+
+        StringBuilder sb = new StringBuilder();
+        
+        for (int index = 0; index < length; index++)
+            sb.AppendLine(string.Join(delimiter, output[index]));
+        
+        
+        string filePath = getPath(selfingGridPath,"selfingGridData",fileNumber_selfingGrid);
+        string compPath = filePath;
+        fileNumber_selfingGrid += 1;
+        StreamWriter outStream = System.IO.File.CreateText(filePath);
+        outStream.WriteLine(sb);
+        outStream.Flush();
+        outStream.Close();
+        outStream.Dispose();
+        
+        return;
+    }
 
    
     bool firstStat;
+    bool firstAutoPos;
+    bool firstGamPos;
     public void WriteStats(){
         
         
             
-            string[] rowDataTemp = new string[14];
+            string[] rowDataTemp = new string[15];
             
             if(firstStat == false){
                 rowDataTemp[0] = "time_seconds";
@@ -398,6 +457,7 @@ public  void WriteNutrientGrid(int[,] grid){
                 rowDataTemp[11] = "zygotesFormed";
                 rowDataTemp[12] = "gametes_total";
                 rowDataTemp[13] = "meanGeneration";
+                rowDataTemp[14] = "globalSelfingRatio";
                 //statsHeaderCounter = 1;
                 //rowData_stats.Add(rowDataTemp);
                 firstStat = true;
@@ -417,6 +477,8 @@ public  void WriteNutrientGrid(int[,] grid){
                 rowDataTemp[11] = zygotesFormed.ToString();
                 rowDataTemp[12] = GameteMain.gameteCount.ToString();
                 rowDataTemp[13] = IndividualStats.GetMeanGeneration().ToString();
+                IndividualStats.globalSelfingRatio = IndividualStats.GetGlobalSelfingRatio(Autotroph_main.individuals);
+                rowDataTemp[14] = IndividualStats.globalSelfingRatio.ToString();
             }
             
             
@@ -453,14 +515,14 @@ public  void WriteNutrientGrid(int[,] grid){
         return;
     }
 
-int autoPosHeader = 0;
+
  void WriteAutoTrophPositions(){
              
             int N = IndividualStats.GetNAutos();
             string[] rowDataTemp;
             
             
-            if(autoPosHeader == 0){
+            if(firstAutoPos == false){
                 rowDataTemp = new string[7];
                 rowDataTemp[0] = "time_seconds";
                 rowDataTemp[1] = "time_steps";
@@ -470,10 +532,8 @@ int autoPosHeader = 0;
                 rowDataTemp[5] = "nutrientLevel";
                 rowDataTemp[6] = "spentNutrients";
 
-                autoPosHeader += 1;
+                firstAutoPos = true;
                 rowData_autoPos.Add(rowDataTemp);
-            }else{
-
             }
              for(int i = 0; i < N; i++){
                 rowDataTemp = new string[7];
@@ -617,7 +677,7 @@ void WriteRepEvents(List<string[]> repevents){
            
             
             //if(repit == 1){
-                rowDataTemp = new string[19];
+                rowDataTemp = new string[20];
                 rowDataTemp[0] = "time_steps";
                 rowDataTemp[1] = "individualNumber";
                 rowDataTemp[2] = "repEventNumber";
@@ -637,13 +697,14 @@ void WriteRepEvents(List<string[]> repevents){
                 rowDataTemp[16] = "migrations_downRight";
                 rowDataTemp[17] = "pos_x";
                 rowDataTemp[18] = "pos_y";
+                rowDataTemp[19] = "maxlifespan";
 
                 rowData_repEvent.Add(rowDataTemp);
                 
             //}
             //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
                 for(int i = 0; i < N; i++){
-                rowDataTemp = new string[19];
+                rowDataTemp = new string[20];
                 rowDataTemp[0] = repevents[i][0];
                 rowDataTemp[1] = repevents[i][1];
                 rowDataTemp[2] = repevents[i][2];
@@ -663,6 +724,7 @@ void WriteRepEvents(List<string[]> repevents){
                 rowDataTemp[16] = repevents[i][16];
                 rowDataTemp[17] = repevents[i][17];
                 rowDataTemp[18] = repevents[i][18];
+                rowDataTemp[19] = repevents[i][19];
 
                 rowData_repEvent.Add(rowDataTemp);
                 
@@ -1045,6 +1107,19 @@ string path = StatisticsWriter.staticGetPath()+"params.txt";
                 sw.WriteLine("Quit.at.generation"+","+ParamLookup.QuitAtGeneration);
                 sw.WriteLine("Quit.generation"+","+ParamLookup.quitGeneration);
                 sw.WriteLine("Reproduction.mode"+","+ParamLookup.ModeOfReproduction);
+                sw.WriteLine("Juvenile.migration"+","+ParamLookup.juvenileMigration);
+                sw.WriteLine("P.migration"+","+ParamLookup.pMigration);
+                sw.WriteLine("Simultaneous.rep.mig"+","+ParamLookup.simultRepMig);
+                sw.WriteLine("Mean.maximum.lifespan"+","+AccessibleGlobalSettings.meanMaximumLifeSpan);
+                sw.WriteLine("SD.maximum.lifespan"+","+AccessibleGlobalSettings.std_lifeSpan);
+                sw.WriteLine("Nutrient.requirement.gamete"+","+ParamLookup.gameteCost_nutrient);
+                sw.WriteLine("Energy.requirement.gamete"+","+ParamLookup.gameteCost_energy);
+                sw.WriteLine("Nutrient.requirement.growth"+","+ParamLookup.growthCost_nutrient);
+                sw.WriteLine("Energy.requirement.growth"+","+ParamLookup.growthCost_energy);
+                sw.WriteLine("Nutrient.requirement.growth.total"+","+ (ParamLookup.growthCost_nutrient*(1f/ParamLookup.growthRate)));
+                sw.WriteLine("Energy.requirement.growth.total"+","+(ParamLookup.growthCost_energy*(1f/ParamLookup.growthRate)));
+                sw.WriteLine("Maturity.coefficient"+","+ParamLookup.maturityCoef);
+
 
                 sw.WriteLine("Circle.radius"+","+ParamLookup.circleRadius);
                 
@@ -1072,8 +1147,12 @@ string path = StatisticsWriter.staticGetPath()+"params.txt";
                 "Quit time: "+ParamLookup.quitTime+ "\n"+
                 "Quit at generation: "+ParamLookup.QuitAtGeneration+ "\n"+
                 "Quit generation: "+ParamLookup.quitGeneration+ "\n"+
-                "Circle radius: "+","+ParamLookup.circleRadius+ "\n"+
-                "Mode of reproduction: "+","+ParamLookup.ModeOfReproduction+ "\n"+
+                "Circle radius: "+ParamLookup.circleRadius+ "\n"+
+                "Mode of reproduction: "+ParamLookup.ModeOfReproduction+ "\n"+
+                "Juvenile.migration: "+ParamLookup.juvenileMigration+"\n"+
+                "P.migration: "+ParamLookup.pMigration+"\n"+
+                "Simultaneous.rep.mig: "+ParamLookup.simultRepMig+"\n"+
+
                 
                 "–––––––––––––––––––––––––"
                 );

@@ -67,6 +67,10 @@ public class StatDisplay : MonoBehaviour
                 ageToStarvationRatio = causeOfDeathRunningList.
                causeOfDeathRunningList.RemoveRange(0,causeOfDeathRunningList.Count-100);
             }*/
+            
+            //Debug.Log("Global selfing ratio = " + IndividualStats.globalSelfingRatio + "\n" +
+              //          "totalself = " + IndividualStats.totalSelf + " | " +
+               //         " totalnotself = " + IndividualStats.totalNotSelf);
             statUpdateTimer = 0;
         }
     }

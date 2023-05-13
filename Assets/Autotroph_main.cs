@@ -4,24 +4,38 @@ using UnityEngine;
 
 public class Autotroph_main : MonoBehaviour
 {
+public bool IsRepProb;
+public float repProb(int age,float k, float a,int maximumLifeSpan){
+    float x = ((float)age)/(float)(maximumLifeSpan);
+
+    float output = 1f/(1f+Mathf.Pow(2f,-(k*x-a*k)));
+    return output;
+}
+public float repRoll;
+float prep;
+
+private bool isStarving;
+public bool isFromSelfing;
 int reachedMaturityAge;
 public static int maturityNominator{get;set;}
+//public static float maturityCoef{get;set;}
 public int totalSpentNutrients;
 public int totalMigrations_left, totalMigrations_right, totalMigrations_up, totalMigrations_down, totalMigrations_upRight, totalMigrations_downRight, totalMigrations_upLeft,totalMigrations_downLeft;
 
 public int[] coordNute = new int[3]{0,0,0};
-
-public bool OnlyMiddle;
+public int[] selfCoords = new int[3]{0,0,-1};
+//public bool OnlyMiddle;
 public static float margin = 2f;
 
 public bool InheritedLifeSpanToggle;
 public bool AsexualReproductionEnabled;
 public static bool InheritedLifeSpan{get;set;}
-public static List<int> reproductiveNutes = new List<int>();
-public static List<float> reproductiveEnergies = new List<float>();
-public static Vector3 originPosition { get; set; }
-    public static float cellSize { get; set; }
+    //public static List<int> reproductiveNutes = new List<int>();
+    //public static List<float> reproductiveEnergies = new List<float>();
+    //public static Vector3 originPosition { get; set; }
+    //public static float cellSize { get; set; }
     public int[] parentGametes;
+    public int[] parentNumbers;
    
 
 
@@ -54,7 +68,7 @@ public static Vector3 originPosition { get; set; }
     //Static Somatic variables
     public float energy_init, growthRate, maxMovementSpeed, energySynthase_DecayAmount, maxTurnAngle, turnProbability, energySynthase_restoreAmount, baseEnergyProduction;
     public int maxNutrients, maximumLifeSpan, absorptionRate, minimumMaturityAge, maxGametes;
-    public bool maxGametesEnabled;
+    //public bool maxGametesEnabled;
 
 
     //Other dynamic variables
@@ -73,10 +87,21 @@ public static Vector3 originPosition { get; set; }
     
     
     // Start is called before the first frame update
+
+    void testReceive(){
+        Debug.Log("Message Received");
+    }
     void Awake(){
+        migrationRoll = 1f;
+        pMigration = 1;
+        isStarving = false;
         canProduceGamete = false;
+        canMigrate = false;
         coordNute = new int[3]{-1,-1,0};
         coordNute = IndividualStats.GetCoordNute(this);
+        
+        selfCoords[0] = coordNute[0];
+        selfCoords[1] = coordNute[1];
         reachedMaturityAge = -1;
         if( maturityNominator <= 0){
             maturityNominator = 1;
@@ -130,6 +155,7 @@ public static Vector3 originPosition { get; set; }
     
     void Start()
     {
+        //migrationRoll = Random.Range(0f,1f);
         mapBounds = boxDims.mapBounds;
         age = 0;
         hasRecordedDeath = false;
@@ -150,16 +176,19 @@ public static Vector3 originPosition { get; set; }
         if(generation == 0 || InheritedLifeSpan == false){
             maximumLifeSpan = Mathf.FloorToInt (ExtraMath.GetNormal(AccessibleGlobalSettings.meanMaximumLifeSpan, AccessibleGlobalSettings.std_lifeSpan));
         }
-        
-        movementSpeed = maxMovementSpeed*currentMaturity;
+        if(IsRepProb){
+            prep = repProb(age,16f,0.5f,maximumLifeSpan);
+        }
+        //movementSpeed = maxMovementSpeed*currentMaturity;
         //movementCost = maxMovementCost*currentMaturity;
 movementCost = maxMovementCost;
-        turningCost = maxTurningCost*currentMaturity;
+        //turningCost = maxTurningCost*currentMaturity;
         GameteMain.zygoteNutrients = gameteCost_nutrient*2;
-        Vector2 newSize = new Vector2(cellSize,cellSize);//new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
+        Vector2 newSize = new Vector2(DiscreteGrid.pubCellSize,DiscreteGrid.pubCellSize);//new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
                 transform.localScale = newSize;
                 if(hardMaturityAgeLimit){
-                    minimumMaturityAge = maximumLifeSpan/maturityNominator;
+                    
+                    minimumMaturityAge = Mathf.RoundToInt(maximumLifeSpan*ParamLookup.maturityCoef);
                     
                 }else{
                     minimumMaturityAge = 0;
@@ -170,6 +199,20 @@ movementCost = maxMovementCost;
                 }else{
                     diagonalCost = movementCost;
                 }
+
+                if(generation != 0){
+                    isFromSelfing = parentNumbers[0].Equals(parentNumbers[1]);
+                    //Debug.Log(isFromSelfing);
+                    selfCoords[0] =coordNute[0];
+                    selfCoords[1] = coordNute[1];
+                    if(isFromSelfing){
+                        selfCoords[2] = 1;
+                    }else{
+                        selfCoords[2] = 0;
+                        }
+                }
+                pMigration = ParamLookup.pMigration;
+
     }
 
    
@@ -178,7 +221,7 @@ movementCost = maxMovementCost;
     int asexualCoolDownPeriod = 32;
     int asexualCoolDownTimer = 0;
     Vector2 safetyVector;
-    bool canProduceGamete, canProduceClone, canMigrate;
+    public bool canProduceGamete, canProduceClone, canMigrate;
     int reproduceOrTryMigrate;
 
     void Update(){
@@ -195,28 +238,33 @@ movementCost = maxMovementCost;
         }else if(coordNute[1] >= ParamLookup.gridDims[1]){
             coordNute[1] = ParamLookup.gridDims[1]-1;
         }
-
-    }
+        selfCoords[0] = coordNute[0];
+        selfCoords[1] = coordNute[1];
+     }
     Vector2 pos = new Vector2(0f,0f);
     void FixedUpdate()
-    {   /*
+    { 
+       //canMigrate = false;
+       //canProduceClone = false; 
+        
+          /*
         pos = transform.position;
         if(GlobalTimeControls.globalSteps < 16){
             //Debug.Log("ind: " + individualNumber+ " | nutrientLevel: " + nutrientLevel + " | cell: " + coordNute[0]+","+coordNute[1]);
         }
-        if(pos.x > mapBounds.x-(cellSize/2f)){
+        if(pos.x > mapBounds.x-(DiscreteGrid.pubCellSize/2f)){
             
-            m_Rigidbody2D.MovePosition(new Vector2(mapBounds.x-(cellSize/2f),pos.y));
-        }else if(pos.x < -mapBounds.x+(cellSize/2f)){
+            m_Rigidbody2D.MovePosition(new Vector2(mapBounds.x-(DiscreteGrid.pubCellSize/2f),pos.y));
+        }else if(pos.x < -mapBounds.x+(DiscreteGrid.pubCellSize/2f)){
             
-            m_Rigidbody2D.MovePosition(new Vector2(-mapBounds.x+(cellSize/2f),pos.y));
+            m_Rigidbody2D.MovePosition(new Vector2(-mapBounds.x+(DiscreteGrid.pubCellSize/2f),pos.y));
         }
-        if(pos.y > mapBounds.y-(cellSize/2f)){
+        if(pos.y > mapBounds.y-(DiscreteGrid.pubCellSize/2f)){
             
-            m_Rigidbody2D.MovePosition(new Vector2(pos.x,mapBounds.y-(cellSize/2f)));
-        }else if(pos.y < -mapBounds.y+(cellSize/2f)){
+            m_Rigidbody2D.MovePosition(new Vector2(pos.x,mapBounds.y-(DiscreteGrid.pubCellSize/2f)));
+        }else if(pos.y < -mapBounds.y+(DiscreteGrid.pubCellSize/2f)){
            
-            m_Rigidbody2D.MovePosition(new Vector2(pos.x,-mapBounds.y+(cellSize/2f)));
+            m_Rigidbody2D.MovePosition(new Vector2(pos.x,-mapBounds.y+(DiscreteGrid.pubCellSize/2f)));
         }
         */
         coordNute[2] = nutrientLevel;
@@ -257,11 +305,12 @@ movementCost = maxMovementCost;
             age += 1;
         
         
-        if(age >= maximumLifeSpan || energyLevel <= 1 ){
+        if(age >= maximumLifeSpan || energyLevel <= 0f){
             
             causeOfDeath = "";
             string reproductiveEvents = (gametesProduced + clonesProduced).ToString();
             cellValue = nutrientGrid.GetValue(m_Rigidbody2D.position);
+            //nutrientGrid.setRequests.Add(new IntGrid.SetRequest(m_Rigidbody2D.position,nutrientLevel + spentNutrients));
             nutrientGrid.SetValue(m_Rigidbody2D.position,cellValue+nutrientLevel + spentNutrients);
             if(age >= maximumLifeSpan){
                 causeOfDeath = "age";
@@ -316,6 +365,10 @@ movementCost = maxMovementCost;
         photosynthesisTimer += 1;
         reproduceOrTryMigrate = 0;
 
+        if(energyLevel <= 0 ){
+            isStarving = true;
+        }else{isStarving = false;}
+
 //Photosynthesis
         if(photosynthesisTimer >= photosyntheticFrequency){
             photosynthesisTimer = 0;
@@ -324,7 +377,7 @@ movementCost = maxMovementCost;
         }
 
         //Nutrient absorption 
-            if(nutrientLevel < maxNutrients && energyLevel >= perNutrientAbsorptionCost*2){
+            if(nutrientLevel < maxNutrients && energyLevel > 1f + perNutrientAbsorptionCost){
                 AbsorbNutrients();
             }
 
@@ -353,59 +406,89 @@ movementCost = maxMovementCost;
 
             if(currentMaturity >= 1f && age >= minimumMaturityAge){
                 if(AsexualReproductionEnabled == false){
-                    if( energyLevel >= gameteCost_energy*2f && nutrientLevel >= gameteCost_nutrient*2){
+                    if( energyLevel > 1f +gameteCost_energy && nutrientLevel >= gameteCost_nutrient){
                         canProduceGamete = true;
-                        if(ParamLookup.simultRepMig){
-                                ProduceGamete();
-                            }
                     }else{canProduceGamete = false;}
                 }else if(AsexualReproductionEnabled == true){
                     if(asexualCoolDownTimer > 0){
                         asexualCoolDownTimer -= 1;
                     }
-                    if( energyLevel >= asexualCost_energy*2f && nutrientLevel >= asexualCost_nutrient*2 && asexualCoolDownTimer <= 0){
+                    if( energyLevel > 1f + asexualCost_energy && nutrientLevel >= asexualCost_nutrient && asexualCoolDownTimer <= 0){
                         canProduceClone = true;
                         asexualCoolDownTimer = asexualCoolDownPeriod;
-                        if(ParamLookup.simultRepMig){
-                            ProduceClone();
-                        }
+
                         
                     }else{canProduceClone = false;}
                     
                 }
             }
             
-            
-            
-            
         
-            if(energyLevel >= movementCost*2f){ //&& energyLevel >= turningCost*64f){
-                canMigrate = true;
-                if(ParamLookup.simultRepMig){
-
-                    migrationRoll = Random.Range(0f,1f);
-                    if(migrationRoll <= ParamLookup.pMigration){
-                        MoveDiscrete();
-                    }
+            if(energyLevel > 1f + diagonalCost){ //&& energyLevel >= turningCost*64f){
+                if(ParamLookup.juvenileMigration ){
+                    canMigrate = true;
+                }else if(currentMaturity >= 1f && age >= minimumMaturityAge){
+                    canMigrate = true;
                 }
- 
+                  
             }else{canMigrate = false;}
 
+            if(ParamLookup.simultRepMig){
+
+                if(canProduceGamete && canMigrate){
+                    
+                    ProduceGamete();
+                    canProduceGamete = false;
+                    migrationRoll = Random.Range(0f,1f);
+                    if(migrationRoll <= ParamLookup.pMigration){
+                        
+                        MoveDiscrete();
+                        canMigrate = false;
+                        
+                    }  
+                }else if(canProduceGamete){
+                    canProduceGamete = false;
+                    if(IsRepProb){
+                if(Random.Range(0,1f) <= prep){
+                    ProduceGamete();
+                }
+            }else{ProduceGamete();}
+                }else if(canMigrate){
+                    migrationRoll = Random.Range(0f,1f);
+                    if(migrationRoll <= ParamLookup.pMigration){
+                        canMigrate = false;
+                        MoveDiscrete();
+                        
+                    }
+                }
+            }
+
     if(!ParamLookup.simultRepMig){
-        reproduceOrTryMigrate = Random.Range(1,4);
+        reproduceOrTryMigrate = Random.Range(1,3);
     if(reproduceOrTryMigrate == 1){
         if(canProduceGamete){
-            ProduceGamete();
+            canProduceGamete = false;
+            if(IsRepProb){
+                if(Random.Range(0,1f) <= prep){
+                    ProduceGamete();
+                }
+            }else{ProduceGamete();}
+            
             
         }else if(canProduceClone){
+            canProduceClone = false;
             ProduceClone();
         }
     }else if(reproduceOrTryMigrate == 2){
         if(canMigrate){
-            migrationRoll = Random.Range(0f,1f);
-                if(migrationRoll <= ParamLookup.pMigration){
-                    MoveDiscrete();
-                }
+
+             migrationRoll = Random.Range(0f,1f);
+                    if(migrationRoll <= ParamLookup.pMigration){
+                        canMigrate = false;
+                        MoveDiscrete();
+                        
+                    }
+                
         }
     }
     }
@@ -438,35 +521,47 @@ movementCost = maxMovementCost;
     }
 
     public float Photosynthesis(float energy){
-        float outEnergy = energy + baseEnergyProduction*energySynthase_Integrity*currentMaturity;
+        float outEnergy = energy + baseEnergyProduction*energySynthase_Integrity;
         return outEnergy;
     }
     public void Anabolism(){
-        //minimumMaturityAge = maximumLifeSpan/maturityNominator;
+        if(hardMaturityAgeLimit){
+                   // minimumMaturityAge = maximumLifeSpan/maturityNominator;
+                   minimumMaturityAge = Mathf.RoundToInt(maximumLifeSpan*ParamLookup.maturityCoef);
+                    
+                }else{
+                    minimumMaturityAge = 0;
+                }
+        if(IsRepProb){
+            prep = repProb(age,16f,0.5f,maximumLifeSpan);
+        }
     if(energySynthase_Integrity < 1f){
-                if( energyLevel >= energySynthase_UpkeepCost_energy && nutrientLevel >= energySynthase_UpkeepCost_nutrient){
+                if( energyLevel > 1f + energySynthase_UpkeepCost_energy && nutrientLevel >= energySynthase_UpkeepCost_nutrient){
                 
                 energySynthase_Integrity += energySynthase_restoreAmount;
                 energyLevel -= energySynthase_UpkeepCost_energy;
                 nutrientLevel -= energySynthase_UpkeepCost_nutrient;
                 spentNutrients += energySynthase_UpkeepCost_nutrient;
                 totalSpentNutrients += energySynthase_UpkeepCost_nutrient;
-                nutrientGrid.SetValue(transform.position,nutrientGrid.GetValue(transform.position)+spentNutrients);
+                //nutrientGrid.setRequests.Add(new IntGrid.SetRequest(m_Rigidbody2D.position, spentNutrients));
+                nutrientGrid.SetValue(m_Rigidbody2D.position,nutrientGrid.GetValue(m_Rigidbody2D.position)+spentNutrients);
+                
                 spentNutrients = 0;
                 if(energySynthase_Integrity >1f){
                     energySynthase_Integrity = 1f;
                 }
             }
             }else if(currentMaturity < 1.000f && energySynthase_Integrity >= 1f){
-                if(nutrientLevel >= growthCost_nutrient && energyLevel >= growthCost_energy*8f){
+                if(nutrientLevel >= growthCost_nutrient && energyLevel > 1f+ growthCost_energy){
                 currentMaturity += growthRate;
                 nutrientLevel -= growthCost_nutrient;
                 energyLevel -= growthCost_energy;
                 spentNutrients += growthCost_nutrient;
                 totalSpentNutrients += growthCost_nutrient;
-                nutrientGrid.SetValue(transform.position,nutrientGrid.GetValue(transform.position)+spentNutrients);
+                //nutrientGrid.setRequests.Add(new IntGrid.SetRequest(m_Rigidbody2D.position, spentNutrients));
+                nutrientGrid.SetValue(m_Rigidbody2D.position,nutrientGrid.GetValue(m_Rigidbody2D.position)+spentNutrients);
                 spentNutrients = 0;
-                Vector2 newSize = new Vector2(cellSize,cellSize);//new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
+                Vector2 newSize = new Vector2(DiscreteGrid.pubCellSize,DiscreteGrid.pubCellSize);//new Vector2(0.01f + currentMaturity, 0.01f + currentMaturity);
                 transform.localScale = newSize;
                 //movementSpeed = Mathf.Clamp(maxMovementSpeed/2f+ (maxMovementSpeed/2f)*currentMaturity,0f,maxMovementSpeed);
                 //movementCost = maxMovementCost*currentMaturity;
@@ -489,7 +584,8 @@ movementCost = maxMovementCost;
                     if( cellValue >= 1){
 
                         nutrientLevel += absorptionRate;
-                        nutrientGrid.SetValue(transform.position,cellValue-1);
+                        //nutrientGrid.setRequests.Add(new IntGrid.SetRequest(m_Rigidbody2D.position, -1));
+                        nutrientGrid.SetValue(m_Rigidbody2D.position,cellValue-1);
                         energyLevel -= perNutrientAbsorptionCost;
                     }
                     /*else if( cellValue < absorptionRate && energyLevel >= cellValue*perNutrientAbsorptionCost){
@@ -508,19 +604,29 @@ movementCost = maxMovementCost;
     }
 
     public void Catabolism(){
-        if(energyLevel >= baseCost_energy){
+        if(energyLevel > 0 && baseCost_energy > 0){
+            if(energyLevel >= baseCost_energy){
                 energyLevel -= baseCost_energy;
-            }
-            if(nutrientLevel >= baseCost_nutrient){
+                }else{
+                energyLevel = 0;
+                }
+        }
+        
+
+            if(nutrientLevel >= baseCost_nutrient && baseCost_nutrient > 0){
                 nutrientLevel -= baseCost_nutrient;
                 spentNutrients += baseCost_nutrient;
                 totalSpentNutrients += baseCost_nutrient;
-                nutrientGrid.SetValue(transform.position,nutrientGrid.GetValue(transform.position)+spentNutrients);
+                //nutrientGrid.setRequests.Add(new IntGrid.SetRequest(m_Rigidbody2D.position, spentNutrients));
+                nutrientGrid.SetValue(m_Rigidbody2D.position,nutrientGrid.GetValue(m_Rigidbody2D.position)+spentNutrients);
                 spentNutrients = 0;
             }
-            if(energySynthase_Integrity >= energySynthase_DecayAmount){
+            if(energySynthase_Integrity > 0){
+                if(energySynthase_Integrity >= energySynthase_DecayAmount){
                 energySynthase_Integrity -= energySynthase_DecayAmount;
+                }else{energySynthase_Integrity = 0;}
             }
+            
             return;
     }
 
@@ -528,7 +634,7 @@ movementCost = maxMovementCost;
     float preEnergy, postEnergy;
     string repType;
     public void ProduceGamete(){
-        
+        canProduceGamete = false;
         repType = "gametic";
         Vector3 gametePosition = new Vector3(transform.position.x,transform.position.y,transform.position.z);
         preNute = nutrientLevel;
@@ -546,7 +652,7 @@ movementCost = maxMovementCost;
             tempGameteScript.parentLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal((double)maximumLifeSpan,1.0));
         }
         if(ParamLookup.doSampleRepEvents){
-            IndividualStats.repEvents.Add(new string[19]{
+            IndividualStats.repEvents.Add(new string[20]{
             GlobalTimeControls.globalSteps.ToString(),
             individualNumber.ToString(),
             gametesProduced.ToString(),
@@ -565,7 +671,8 @@ movementCost = maxMovementCost;
                 totalMigrations_downLeft.ToString(),
                 totalMigrations_downRight.ToString(),
             coordNute[0].ToString(),
-            coordNute[1].ToString()
+            coordNute[1].ToString(),
+            maximumLifeSpan.ToString()
             });
         //time_steps, indnum, preNute, postNute, preEnergy, postEnergy, repType
         }
@@ -631,17 +738,20 @@ movementCost = maxMovementCost;
     Vector2 destinationVector = new Vector2(0f,0f);
     Vector2 sourceVector = new Vector2(0f,0f);
     public static float diagonalCost{get;set;}
+    public static float pMigration{get;set;}
     public void MoveDiscrete(){
-        if(energyLevel > movementCost*2f){
+        migrationRoll = 1f;
+        canMigrate = false;
+        if(energyLevel > 1f+ diagonalCost){
         
             sourceVector = transform.position;
-            var destinationIndex = Random.Range(0,8);
-            var newX = destinationCellMatrix[destinationIndex,0]*cellSize + sourceVector.x;
-            var newY = destinationCellMatrix[destinationIndex,1]*cellSize + sourceVector.y;
+            int destinationIndex = Random.Range(0,8);
+            float newX = destinationCellMatrix[destinationIndex,0]*DiscreteGrid.pubCellSize + sourceVector.x;
+            float newY = destinationCellMatrix[destinationIndex,1]*DiscreteGrid.pubCellSize + sourceVector.y;
         destinationVector.x = Mathf.Min(mapBounds.x,Mathf.Max(-mapBounds.x,newX));
         destinationVector.y = Mathf.Min(mapBounds.y,Mathf.Max(-mapBounds.y,newY));
-        var dxy = (destinationVector.x - sourceVector.x) +(destinationVector.y - sourceVector.y);
-        if(dxy != 0){
+        //var dxy = (destinationVector.x - sourceVector.x) +(destinationVector.y - sourceVector.y);
+        if(destinationVector.x != sourceVector.x || destinationVector.y != sourceVector.y){
             
             m_Rigidbody2D.MovePosition(destinationVector);
             switch (destinationIndex){
@@ -683,7 +793,7 @@ movementCost = maxMovementCost;
         
     }
         /*
-        moveMag = cellSize;
+        moveMag = DiscreteGrid.pubCellSize;
         if(energyLevel > movementCost*2f){
             float randAngle = Random.Range(0,Mathf.PI);
             float randMag =(float) ExtraMath.GetNormal(0,ParamLookup.migrationSD);
@@ -703,40 +813,40 @@ movementCost = maxMovementCost;
         float thisMag = testVector.sqrMagnitude;
         if(  absMag > 0 && absMag < 1.414214f){
             if(testVector.x <= -1f){
-                moveVector.x = -cellSize;
+                moveVector.x = -DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost;
                 totalMigrations_left += 1;
             }else if(testVector.x >= 1f){
-                moveVector.x = cellSize;
+                moveVector.x = DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost;
                 totalMigrations_right += 1;
             }else if(testVector.y >= 1f){
-                moveVector.y = cellSize;
+                moveVector.y = DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost;
                 totalMigrations_up += 1;
             }else if(testVector.y <= -1f){
-                moveVector.y = -cellSize;
+                moveVector.y = -DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost;
                 totalMigrations_down += 1;
             }
         }else if(absMag >= 1.41f ){
             if(testVector.x <= -1f && testVector.y <= -1f){
-            moveVector.x = -cellSize; moveVector.y = -cellSize;
+            moveVector.x = -DiscreteGrid.pubCellSize; moveVector.y = -DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost*1.4f;
                 totalMigrations_downLeft += 1;
         }
         else if(testVector.x <= -1f && testVector.y >= 1f){
-            moveVector.x = -cellSize; moveVector.y = cellSize;
+            moveVector.x = -DiscreteGrid.pubCellSize; moveVector.y = DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost*1.41f;
                 totalMigrations_upLeft += 1;
         }
         else if(testVector.y <= -1f && testVector.x >= 1f){
-            moveVector.y = -cellSize; moveVector.x = cellSize;
+            moveVector.y = -DiscreteGrid.pubCellSize; moveVector.x = DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost*1.41f;
                 totalMigrations_downRight += 1;
         }
         else if(testVector.x >= 1f && testVector.y >= 1f){
-           moveVector.x = cellSize; moveVector.y = cellSize;
+           moveVector.x = DiscreteGrid.pubCellSize; moveVector.y = DiscreteGrid.pubCellSize;
                 energyLevel -= movementCost*1.414214f;
                 totalMigrations_upRight += 1;
         }
@@ -747,36 +857,36 @@ movementCost = maxMovementCost;
         
 
         if(testVector.x < -1f ){
-            moveVector.x = -cellSize;
+            moveVector.x = -DiscreteGrid.pubCellSize;
             energyLevel-=movementCost;
             totalMigrations_left +=1;
         }else if(testVector.x > 1f){
-            moveVector.x = cellSize;
+            moveVector.x = DiscreteGrid.pubCellSize;
             energyLevel-=movementCost;
             totalMigrations_right +=1;
         }
 
         if(testVector.y < -1f ){
-            moveVector.y = -cellSize;
+            moveVector.y = -DiscreteGrid.pubCellSize;
             energyLevel-=movementCost;
             totalMigrations_down +=1;
         }else if(testVector.y > 1f){
-            moveVector.y = cellSize;
+            moveVector.y = DiscreteGrid.pubCellSize;
             energyLevel-=movementCost;
             totalMigrations_up +=1;
         }
         if(moveVector.sqrMagnitude != 0){
             newVector.x = Mathf.Floor(transform.position.x + moveVector.x);
-            if(newVector.x >= mapBounds.x-(cellSize/2f)){
-                newVector.x = mapBounds.x-(cellSize/2f);
-                }else if(newVector.x <= -mapBounds.x+(cellSize/2f)){
-                    newVector.x = -mapBounds.x+(cellSize/2f);
+            if(newVector.x >= mapBounds.x-(DiscreteGrid.pubCellSize/2f)){
+                newVector.x = mapBounds.x-(DiscreteGrid.pubCellSize/2f);
+                }else if(newVector.x <= -mapBounds.x+(DiscreteGrid.pubCellSize/2f)){
+                    newVector.x = -mapBounds.x+(DiscreteGrid.pubCellSize/2f);
                 }
             newVector.y = Mathf.Floor(transform.position.y + moveVector.y);
-            if(newVector.y >= mapBounds.y-(cellSize/2f)){
-                newVector.y = mapBounds.y-(cellSize/2f);
-                }else if(newVector.y <= -mapBounds.y+(cellSize/2f)){
-                    newVector.y = -mapBounds.y+(cellSize/2f);
+            if(newVector.y >= mapBounds.y-(DiscreteGrid.pubCellSize/2f)){
+                newVector.y = mapBounds.y-(DiscreteGrid.pubCellSize/2f);
+                }else if(newVector.y <= -mapBounds.y+(DiscreteGrid.pubCellSize/2f)){
+                    newVector.y = -mapBounds.y+(DiscreteGrid.pubCellSize/2f);
                 }
             
 
@@ -789,7 +899,7 @@ movementCost = maxMovementCost;
         }
         */
 
-
+        return;
     }
 
 
@@ -834,8 +944,8 @@ movementCost = maxMovementCost;
 
     void GetGridPosition(Vector3 worldPosition, out int x, out int y)
     {
-        x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
-        y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+        x = Mathf.FloorToInt((worldPosition - DiscreteGrid.pubOriginPosition).x / DiscreteGrid.pubCellSize);
+        y = Mathf.FloorToInt((worldPosition - DiscreteGrid.pubOriginPosition).y / DiscreteGrid.pubCellSize);
     }
 
 }
@@ -852,6 +962,17 @@ public static class IndividualStats{
             int[,] outGrid = new int[gridDims[0],gridDims[1]];
             foreach(Autotroph_main ind in inds){
                 outGrid[ind.coordNute[0],ind.coordNute[1]] +=1;
+            }
+            return outGrid;
+        }
+
+            public static int[,] GetSelfingGrid(List<Autotroph_main> inds, int[] gridDims){
+            int[,] outGrid = new int[gridDims[0],gridDims[1]];
+            foreach(Autotroph_main ind in inds){
+                if(ind.selfCoords[2] > 0){
+                    outGrid[ind.coordNute[0],ind.coordNute[1]] += ind.selfCoords[2];
+                }
+                
             }
             return outGrid;
         }
@@ -947,8 +1068,8 @@ public static class IndividualStats{
             
             int[] output = new int[3]{0,0,0};
             
-            output[0] = Mathf.FloorToInt((ind.transform.position - Autotroph_main.originPosition).x / Autotroph_main.cellSize);
-            output[1] = Mathf.FloorToInt((ind.transform.position - Autotroph_main.originPosition).y / Autotroph_main.cellSize);
+            output[0] = Mathf.FloorToInt((ind.transform.position - DiscreteGrid.pubOriginPosition).x / DiscreteGrid.pubCellSize);
+            output[1] = Mathf.FloorToInt((ind.transform.position - DiscreteGrid.pubOriginPosition).y / DiscreteGrid.pubCellSize);
             output[2] = ind.nutrientLevel + ind.spentNutrients;
                 if(output[0] < 0  || output[1] < 0 || output[0] > ParamLookup.gridDims[0]-1 || output[1] > ParamLookup.gridDims[1]-1){
                 output[0] = -1;
@@ -956,5 +1077,24 @@ public static class IndividualStats{
                 output[2] = 0;
             }
             return output;
+        }
+
+        public static float globalSelfingRatio{get;set;}
+        public static float totalNotSelf{get;set;}
+        public static float totalSelf{get;set;}
+        public static float GetGlobalSelfingRatio(List<Autotroph_main> inds){
+            int totalSelf = 0;
+            int totalNotSelf = 0;
+            foreach(Autotroph_main ind in inds){
+                if(ind.selfCoords[2] == 0){
+                    totalNotSelf +=1;
+                }else if(ind.selfCoords[2] == 1){
+                    totalSelf += 1;
+                }
+                IndividualStats.totalNotSelf = totalNotSelf;
+                IndividualStats.totalSelf = totalSelf;
+            }
+
+            return( ((float)totalSelf/((float)inds.Count) ));
         }
     }

@@ -360,6 +360,7 @@ public class GameteMain : MonoBehaviour
                             Autotroph_main thisAutotroph_script = thisAutotroph.GetComponent<Autotroph_main>();
                             thisAutotroph_script.generation = (generation+otherGamete_script.generation)/2;
                             thisAutotroph_script.parentGametes = new int[2]{gameteNumber,otherGamete_script.gameteNumber};
+                            thisAutotroph_script.parentNumbers = new int[2]{parentNumber,otherGamete_script.parentNumber};
                             if(Autotroph_main.InheritedLifeSpan == true){
                                 /*double[] msd = ExtraMath.GetMeanAndStDev(parentLifeSpan,otherGamete_script.parentLifeSpan);
                                 msd[1] = (double)Mathf.Sqrt((float)msd[1]);
@@ -418,8 +419,8 @@ public static class GameteStats{
     public static int[] GetCoordNute( GameteMain gam){
             
             int[] output = new int[3];
-            output[0] = Mathf.FloorToInt((gam.transform.position - Autotroph_main.originPosition).x / Autotroph_main.cellSize);
-            output[1] = Mathf.FloorToInt((gam.transform.position - Autotroph_main.originPosition).y / Autotroph_main.cellSize);
+            output[0] = Mathf.FloorToInt((gam.transform.position - DiscreteGrid.pubOriginPosition).x / DiscreteGrid.pubCellSize);
+            output[1] = Mathf.FloorToInt((gam.transform.position - DiscreteGrid.pubOriginPosition).y / DiscreteGrid.pubCellSize);
             output[2] = gam.nutrientLevel;
             if(output[0] < 0  || output[1] < 0 || output[0] > ParamLookup.gridDims[0]-1 || output[1] > ParamLookup.gridDims[1]-1){
                 output[0] = -1;
@@ -428,5 +429,7 @@ public static class GameteStats{
             }
             return output;
         }
+
+        public static int[,] gamGrid; 
 
 }

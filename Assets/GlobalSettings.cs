@@ -18,6 +18,7 @@ public class GlobalSettings : MonoBehaviour
     public static int initDiffusionPeriod{get;set;}
     public float SetInitConcentration;
     public static float initConc_master{get;set;}
+    public float maturityCoef;
    public bool QuitOnGlobalExtinction;
    public bool QuitAtTime;
    public int quitTime;
@@ -37,6 +38,10 @@ public class GlobalSettings : MonoBehaviour
    public InputFieldToFloat initConcField;
    public bool geometricDiagonalCost;
    public bool simultRepMig;
+   public bool spawnCenterEvenInd;
+   public bool randomStartAge;
+   public bool randomStartMaturity;
+   public bool juvenileMigration;
    
     void Awake(){
         ParamLookup.isServer = GetIsServer();
@@ -64,6 +69,12 @@ public class GlobalSettings : MonoBehaviour
         ParamLookup.pMigration = pMigration;
         ParamLookup.geometricDiagonalCost = geometricDiagonalCost;
         ParamLookup.simultRepMig = simultRepMig;
+        ParamLookup.spawnCenterEvenInd = spawnCenterEvenInd;
+        ParamLookup.randomStartAge = randomStartAge;
+        ParamLookup.randomStartMaturity = randomStartMaturity;
+        ParamLookup.juvenileMigration = juvenileMigration;
+        ParamLookup.maturityNominator = maturityNominator;
+        ParamLookup.maturityCoef = maturityCoef;
         if(autotrophPrefabScript.AsexualReproductionEnabled){
             ParamLookup.ModeOfReproduction = "Asexual";
         }
@@ -129,7 +140,9 @@ public class GlobalSettings : MonoBehaviour
          "Autotrophs: " + IndividualStats.GetNAutos() +"\n" +
          "Gametes: " + GameteStats.GetNGamete() +"\n" +
          "Mean Generation Number: " + IndividualStats.GetMeanGeneration()+"\n" +
-         "TotalNutrients: " + nutrientStats.totalNutrients) ;
+         "TotalNutrients: " + nutrientStats.totalNutrients+"\n" +
+         "globalSefingRatio: " + IndividualStats.globalSelfingRatio) ;
+
     }
 
 
@@ -182,6 +195,18 @@ public static class ParamLookup{
    public static float pMigration{get;set;}
    public static bool geometricDiagonalCost{get;set;}
    public static bool simultRepMig{get;set;}
+   public static bool spawnCenterEvenInd{get;set;}
+   public static bool randomStartAge{get;set;}
+   public static bool randomStartMaturity{get;set;}
+   public static bool juvenileMigration{get;set;}
+   public static int gameteCost_nutrient{get;set;}
+   public static int growthCost_nutrient{get;set;}
+    public static float gameteCost_energy{get;set;}
+    public static float growthCost_energy{get;set;}
+    public static float growthRate{get;set;}
+    public static int maturityNominator{get;set;}
+    public static float maturityCoef{get;set;}
+
     
     
     

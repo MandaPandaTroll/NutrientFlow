@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Linq;
  using UnityEngine.SceneManagement;
 
 
@@ -20,6 +20,7 @@ public class GlobalTimeControls : MonoBehaviour
         ogTimeScale = Time.timeScale;
         Time.timeScale = 0;
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -41,3 +42,5 @@ public class GlobalTimeControls : MonoBehaviour
         globalSteps +=1;
     }
 }
+
+

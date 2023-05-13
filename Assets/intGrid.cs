@@ -1,8 +1,21 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 
 public class IntGrid{
+
+    public struct SetRequest{
+    public Vector3 Coordinate;
+    public int DeltaValue;
+        public SetRequest(Vector3 coordinate, int deltaValue) {
+        this.Coordinate = coordinate;
+        this.DeltaValue = deltaValue;
+    }
+
+}
+
+
     static int[,] internalKernel = new int[3,3];
     public  int[,] zeroKernel = new int[3,3]{{0,0,0},{0,0,0},{0,0,0}};
     public int[,] gridArray;
@@ -86,6 +99,45 @@ public class IntGrid{
 
     }
 
+
+public  List<SetRequest> setRequests = new List<SetRequest>();
+
+//We are going to implement the modern implementation of the Fisher-Yates Shuffle algorithm:
+public List<SetRequest> GenerateRandomLoop(List<SetRequest> listToShuffle)
+{
+    for (int i = listToShuffle.Count - 1; i > 0; i--)
+    {
+        var k = Random.Range(0,i + 1);
+        var value = listToShuffle[k];
+        listToShuffle[k] = listToShuffle[i];
+        listToShuffle[i] = value;
+    }
+    return listToShuffle;
+}
+
+
+
+public  List<SetRequest> GenerateRandomOrderBy(List<SetRequest> listToShuffle)
+{
+    var shuffledList = listToShuffle.OrderBy(_ => Random.Range(0,int.MaxValue)).ToList();
+    return shuffledList;
+}
+
+
+
+    public  void FulfillSetRequests(List<SetRequest> requests){
+        List<SetRequest> listToShuffle = GenerateRandomOrderBy(requests);
+
+        foreach(SetRequest request in listToShuffle){
+            ChangeValue(request.Coordinate,request.DeltaValue);
+            Debug.Log(request.Coordinate+","+request.DeltaValue);
+        }
+        setRequests.Clear();
+    }
+
+
+
+
     public int GetValue(int x, int y) {
         if(x >= 0 && y >= 0 && x < width && y < height){
             return gridArray[x , y];
@@ -135,6 +187,52 @@ public class IntGrid{
         GetXY(worldPosition, out x, out y);
         return GetValue(x, y);
     }
+
+    public void ChangeValue(int x, int y, int deltaValue){
+        int preValue;
+        int outValue;
+        if(x >= 0 && y >= 0 && x < width && y < height){
+             preValue = GetValue(x,y);
+             outValue = preValue + deltaValue;
+
+            if(outValue < 0){outValue = 0;}
+
+            gridArray[x, y] = outValue;
+        }
+        else {
+            int tempx = 0;
+            int tempy = 0;
+            if (x < 0){
+                tempx = 0;
+            } else if (x >= width){
+                tempx = width-1;
+            }
+
+            if (y < 0){
+                tempy = 0;
+            } else if (y >= height){
+                tempy = height-1;
+            }
+                preValue = GetValue(tempx,tempy);
+                outValue = preValue+deltaValue;
+                if(outValue < 0){ outValue = 0;}
+             gridArray[tempx,tempy] = outValue;
+        }
+
+    }
+
+    
+
+
+    
+
+    public void ChangeValue(Vector3 worldPosition, int deltaValue){
+        int x, y;
+        GetXY(worldPosition, out x, out y);
+        ChangeValue(x, y, deltaValue);
+
+    }
+
     
 
     public int GetSum(){
@@ -146,6 +244,13 @@ public class IntGrid{
 public Vector2 GetCellCenter(int x, int y){
     return GetWorldPosition(x,y);
 }
-   
+
+
 
 }
+
+
+
+
+
+

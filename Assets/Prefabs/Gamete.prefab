@@ -142,7 +142,7 @@ MonoBehaviour:
   zygoteLifeSpan: 0
   movementSpeed: 0.004
   mapBounds: {x: 0, y: 0}
-  meanMaximumLifeSpan: 4
+  meanMaximumLifeSpan: 3
   std_lifeSpan: 0
   parentNumber: 0
   gameteNumber: 0
@@ -152,11 +152,11 @@ MonoBehaviour:
   perceptionRadius: 0
   incompatibilityEnabled: 0
   interactionRadius: 2
-  actionFrequency: 2
+  actionFrequency: 1
   actionTimer: 0
   nutrientLevel: 0
   numSteps: 0
-  maximumLifeSpan: 4
+  maximumLifeSpan: 8
   generation: 0
   autotroph_prefab: {fileID: 5091997082272881867, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}
   masterFrequency: 1

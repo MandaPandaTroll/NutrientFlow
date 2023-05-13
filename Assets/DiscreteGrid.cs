@@ -20,14 +20,16 @@ public static int[,] lockedNutrientCoords{get;set;}
     public static float fDiffusionRate{get;set;}
     public int displayDiffusionRate;
    
-    public static bool DiffusionEnabled{get;set;}
+    //public static bool DiffusionEnabled{get;set;}
     public bool DoSpawnNutrients{get;set;}
     public bool initDiffusionEnabled;
     public IntGrid nutrientGrid;
     public Transform boxTransform;
     public int gridWidth, gridHeight;
     public float cellSize;
+    public static float pubCellSize{get;set;}
     Vector3 originPosition;
+    public static Vector3 pubOriginPosition{get;set;}
 
     public float initialConcentration;
    
@@ -45,7 +47,7 @@ public static int[,] lockedNutrientCoords{get;set;}
     public bool diffusionEnabled;
     public int diffusionLimit;
     int dirCounter = 0;
-    int dirs;
+    //int dirs;
     public int numCells;
    int tempFree, tempLocked, tempTotal;
    public int maxPerVeryRandomSpawnDivisor;
@@ -53,11 +55,14 @@ public static int[,] lockedNutrientCoords{get;set;}
    public Slider diffRateSlider;
 
    public static Vector2 boxSize{get;set;}
-   public bool autoRespawnNutrientsEnabled;
+   //public bool autoRespawnNutrientsEnabled;
    bool nutesSpawned;
    public InputFieldToFloat initconcField;
   
    void Awake(){
+    originPosition = new Vector3(-boxTransform.localScale.x/2f,-boxTransform.localScale.y/2f,0f);
+    pubOriginPosition = originPosition;
+    pubCellSize = cellSize;
         lockedNutrientCoords = new int[gridWidth,gridHeight]; 
         gridWidth = Mathf.FloorToInt(boxTransform.localScale.x/cellSize);
         gridHeight = Mathf.FloorToInt(boxTransform.localScale.y / cellSize);
@@ -106,9 +111,9 @@ public static int[,] lockedNutrientCoords{get;set;}
         
 
         nutrientGrid = new IntGrid(gridWidth,gridHeight,cellSize,originPosition);
-        Autotroph_main.cellSize = cellSize;
-        Autotroph_main.originPosition = originPosition;
-        GameteMain.originPosition = originPosition;
+        //Autotroph_main.cellSize = cellSize;
+        //Autotroph_main.originPosition = originPosition;
+        //GameteMain.originPosition = originPosition;
         
         numCells = gridWidth*gridHeight;
         
@@ -143,7 +148,7 @@ public static int[,] lockedNutrientCoords{get;set;}
                 }
             }
         }*/
-        
+        //nutrientGrid.FulfillSetRequests(nutrientGrid.setRequests);
     }
  public int nutesLeft;
  public static float spawnCircleRadius_realised;
@@ -295,10 +300,12 @@ public static int[,] lockedNutrientCoords{get;set;}
         StatisticsWriter.WriteParams();
         
         StatisticsWriter.sampleGrid = nutrientGrid.gridArray;
-        statisticsWriter.WriteNutrientGrid(nutrientGrid.gridArray);
+        //statisticsWriter.WriteNutrientGrid(nutrientGrid.gridArray);
     }
 
     int diffusionTimer;
+
+    
 
     void FixedUpdate(){
         
