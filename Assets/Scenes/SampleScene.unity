@@ -1915,8 +1915,8 @@ MonoBehaviour:
   spawnInMiddle: 0
   veryRandomSpawn: 0
   defaultSpawn: 0
-  uniformSpawn: 1
-  circleSpawn: 0
+  uniformSpawn: 0
+  circleSpawn: 1
   spawnCircleRadius: 0.1
   nutesToSpawn: 0
   diffusionEnabled: 0
@@ -5686,12 +5686,12 @@ MonoBehaviour:
   SetInitConcentration: 32
   maturityCoef: 0.8
   QuitOnGlobalExtinction: 1
-  QuitAtTime: 1
+  QuitAtTime: 0
   quitTime: 100000
   QuitAtGeneration: 0
   quitGeneration: 64
   LogTimePeriod: 512
-  pMigration: 0.0008
+  pMigration: 0.1
   doSampleRepEvents: 1
   startButton: {fileID: 345027977}
   autotrophPrefabScript: {fileID: -748643579211721301, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}

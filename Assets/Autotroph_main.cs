@@ -48,7 +48,7 @@ public static bool InheritedLifeSpan{get;set;}
    
     //Costs
     public float baseCost_energy, growthCost_energy, gameteCost_energy, energySynthase_UpkeepCost_energy,
-     maxMovementCost,movementCost, maxTurningCost, turningCost, perNutrientAbsorptionCost;
+     maxMovementCost,movementCost, perNutrientAbsorptionCost;
     public int baseCost_nutrient,growthCost_nutrient, gameteCost_nutrient, energySynthase_UpkeepCost_nutrient, asexualCost_nutrient, asexualCost_energy;
 
    
@@ -903,7 +903,7 @@ movementCost = maxMovementCost;
     }
 
 
-    public void Move(){
+    /*public void Move(){
         
         if(Random.Range(0,turnDice) == 1 && energyLevel >= turningCost){
                 m_Rigidbody2D.MoveRotation(m_Rigidbody2D.rotation + Random.Range(-maxTurnAngle,maxTurnAngle));
@@ -939,7 +939,7 @@ movementCost = maxMovementCost;
                 energyLevel -= movementCost;
             }
     }
-
+*/
     public static int staticGameteCost{get;set;}
 
     void GetGridPosition(Vector3 worldPosition, out int x, out int y)
