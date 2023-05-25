@@ -244,61 +244,9 @@ movementCost = maxMovementCost;
     Vector2 pos = new Vector2(0f,0f);
     void FixedUpdate()
     { 
-       //canMigrate = false;
-       //canProduceClone = false; 
-        
-          /*
-        pos = transform.position;
-        if(GlobalTimeControls.globalSteps < 16){
-            //Debug.Log("ind: " + individualNumber+ " | nutrientLevel: " + nutrientLevel + " | cell: " + coordNute[0]+","+coordNute[1]);
-        }
-        if(pos.x > mapBounds.x-(DiscreteGrid.pubCellSize/2f)){
-            
-            m_Rigidbody2D.MovePosition(new Vector2(mapBounds.x-(DiscreteGrid.pubCellSize/2f),pos.y));
-        }else if(pos.x < -mapBounds.x+(DiscreteGrid.pubCellSize/2f)){
-            
-            m_Rigidbody2D.MovePosition(new Vector2(-mapBounds.x+(DiscreteGrid.pubCellSize/2f),pos.y));
-        }
-        if(pos.y > mapBounds.y-(DiscreteGrid.pubCellSize/2f)){
-            
-            m_Rigidbody2D.MovePosition(new Vector2(pos.x,mapBounds.y-(DiscreteGrid.pubCellSize/2f)));
-        }else if(pos.y < -mapBounds.y+(DiscreteGrid.pubCellSize/2f)){
-           
-            m_Rigidbody2D.MovePosition(new Vector2(pos.x,-mapBounds.y+(DiscreteGrid.pubCellSize/2f)));
-        }
-        */
+       
         coordNute[2] = nutrientLevel;
-        /*if (OnlyMiddle)
-        {
-            Vector2 discretePosition = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
-            m_Rigidbody2D.MovePosition(discretePosition);
-        }*/
-        /*
-        if(m_Rigidbody2D.position.x <= -mapBounds.x+0.5){
-                    Vector2 newPos = m_Rigidbody2D.position;
-                    newPos = new Vector2(-mapBounds.x+margin,m_Rigidbody2D.position.y);
-                    m_Rigidbody2D.MoveRotation(Random.Range(-180f,180f));
-                    m_Rigidbody2D.MovePosition(newPos);
-                }
-                else if(m_Rigidbody2D.position.x >= mapBounds.x-margin){
-                    Vector2 newPos = m_Rigidbody2D.position;
-                    newPos = new Vector2(mapBounds.x-margin,m_Rigidbody2D.position.y);
-                    m_Rigidbody2D.MoveRotation(Random.Range(-180f,180f));
-                    m_Rigidbody2D.MovePosition(newPos);
-                }
-                if(m_Rigidbody2D.position.y <= -mapBounds.y+margin){
-                    Vector2 newPos = m_Rigidbody2D.position;
-                    newPos = new Vector2(m_Rigidbody2D.position.x,-mapBounds.y+margin);
-                    m_Rigidbody2D.MoveRotation(Random.Range(-180f,180f));
-                    m_Rigidbody2D.MovePosition(newPos);
-                }
-                else if(m_Rigidbody2D.position.y >= mapBounds.y-margin){
-                    Vector2 newPos = m_Rigidbody2D.position;
-                    newPos = new Vector2(m_Rigidbody2D.position.x,mapBounds.y-margin);
-                    m_Rigidbody2D.MoveRotation(Random.Range(-180f,180f));
-                    m_Rigidbody2D.MovePosition(newPos);
-                }
-        */
+        
         masterTimer += 1;
         if( masterTimer >= masterFrequency){
             masterTimer = 0;
@@ -395,10 +343,6 @@ movementCost = maxMovementCost;
         }
 
         
-
-//Actions are taken each time the actionTimer reaches a pre-defined value
-        //if(actionTimer >= actionFrequency){
-         //   actionTimer = 0;
             
         
             
