@@ -593,7 +593,7 @@ movementCost = maxMovementCost;
         tempGameteScript.generation = generation + 1;
         tempGameteScript.parentNumber = individualNumber;
         if(InheritedLifeSpan == true){
-            tempGameteScript.parentLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal((double)maximumLifeSpan,1.0));
+            tempGameteScript.parentLifeSpan = maximumLifeSpan+Random.Range(-1,2);
         }
         if(ParamLookup.doSampleRepEvents){
             IndividualStats.repEvents.Add(new string[20]{
@@ -650,7 +650,7 @@ movementCost = maxMovementCost;
         
 
         if(InheritedLifeSpan == true){
-            tempAutotrophScript.maximumLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal((double)maximumLifeSpan,1.0));
+            tempAutotrophScript.maximumLifeSpan = maximumLifeSpan+Random.Range(-1,2);
         }
 
 

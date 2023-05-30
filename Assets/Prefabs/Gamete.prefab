@@ -150,7 +150,7 @@ MonoBehaviour:
   autoTrophSpawned: 0
   chemotaxisEnabled: 0
   perceptionRadius: 0
-  incompatibilityEnabled: 0
+  incompatibilityEnabled: 1
   interactionRadius: 2
   actionFrequency: 1
   actionTimer: 0

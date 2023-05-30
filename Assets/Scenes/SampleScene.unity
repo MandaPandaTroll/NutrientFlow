@@ -5691,7 +5691,7 @@ MonoBehaviour:
   QuitAtGeneration: 0
   quitGeneration: 64
   LogTimePeriod: 512
-  pMigration: 0.015
+  pMigration: 0.0002
   doSampleRepEvents: 1
   startButton: {fileID: 345027977}
   autotrophPrefabScript: {fileID: -748643579211721301, guid: 39ba16f73b9e3405ca7941c9096f76f2, type: 3}

@@ -348,7 +348,7 @@ MonoBehaviour:
   totalMigrations_downLeft: 0
   coordNute: 000000000000000000000000
   selfCoords: 0000000000000000ffffffff
-  InheritedLifeSpanToggle: 0
+  InheritedLifeSpanToggle: 1
   AsexualReproductionEnabled: 0
   parentGametes: 
   parentNumbers: 
@@ -360,8 +360,6 @@ MonoBehaviour:
   energySynthase_UpkeepCost_energy: 4
   maxMovementCost: 12
   movementCost: 12
-  maxTurningCost: 0
-  turningCost: 0.5
   perNutrientAbsorptionCost: 0.1
   baseCost_nutrient: 0
   growthCost_nutrient: 1

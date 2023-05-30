@@ -365,8 +365,8 @@ public class GameteMain : MonoBehaviour
                                 /*double[] msd = ExtraMath.GetMeanAndStDev(parentLifeSpan,otherGamete_script.parentLifeSpan);
                                 msd[1] = (double)Mathf.Sqrt((float)msd[1]);
                                 zygoteLifeSpan = Mathf.FloorToInt(ExtraMath.GetNormal(msd[0],msd[1]));*/
-
-                                zygoteLifeSpan = Random.Range(((parentLifeSpan+otherGamete_script.parentLifeSpan)/2)-1,((parentLifeSpan+otherGamete_script.parentLifeSpan)/2)+2);
+                                
+                                zygoteLifeSpan = Random.Range(System.Math.Min(parentLifeSpan,otherGamete_script.parentLifeSpan),System.Math.Max(parentLifeSpan,otherGamete_script.parentLifeSpan)+1);
                                 thisAutotroph_script.maximumLifeSpan = zygoteLifeSpan;
                             }
                             gameteScripts.Remove(otherGamete_script);
